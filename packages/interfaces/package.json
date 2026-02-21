@@ -1,0 +1,19 @@
+{
+  "name": "@repo/interfaces",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@repo/types": "*",
+    "@repo/typescript": "*",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  },
+  "scripts": {
+    "dev": "tsc --watch --preserveWatchOutput",
+    "build": "tsc"
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  }
+}

@@ -1,0 +1,10 @@
+services:
+  db:
+    extends:
+      file: docker-compose.yml
+      service: db
+    container_name: solus_dev
+    environment:
+      POSTGRES_USER: ${DEVELOPMENT_DATABASE_USER}
+      POSTGRES_PASSWORD: ${DEVELOPMENT_DATABASE_PASSWORD}
+      POSTGRES_DB: ${DEVELOPMENT_DATABASE_NAME}
