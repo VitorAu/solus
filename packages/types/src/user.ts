@@ -5,7 +5,7 @@ const UserSchema = z.object({
   email: z.email(),
   name: z.string(),
   username: z.string(),
-  avatar_url: z.string(),
+  avatar_url: z.string().nullable(),
   password: z.string(),
   birthdate: z.date(),
   created_at: z.date(),

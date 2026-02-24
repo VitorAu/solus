@@ -19,7 +19,7 @@ export interface IUser {
     id: UserType["id"],
     data: Pick<
       UserType,
-      "email" | "name" | "username" | "avatar_url" | "birthdate" | "password"
+      "email" | "name" | "username" | "avatar_url" | "birthdate"
     >,
   ): Promise<Omit<UserType, "password">>;
   UpdateUserPassword(
