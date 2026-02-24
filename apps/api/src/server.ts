@@ -9,6 +9,7 @@ import {
 } from "fastify-type-provider-zod";
 import { CorsPlugin } from "./plugins/cors";
 import { HealthRoutes } from "./routes/health";
+import { AuthRoutes } from "./routes/auth";
 
 const isDev = environment.nodeEnvironment === "development";
 
@@ -39,6 +40,7 @@ server.register(JwtPlugin);
 server.register(CorsPlugin);
 
 server.register(HealthRoutes, { prefix: "/api/v1/health" });
+server.register(AuthRoutes, { prefix: "/api/v1/auth" });
 
 server.listen({ port: environment.serverPort, host: "0.0.0.0" }, (error) => {
   if (error) {

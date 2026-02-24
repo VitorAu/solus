@@ -3,7 +3,7 @@ import fastifyCors from "@fastify/cors";
 import fp from "fastify-plugin";
 
 async function Cors(fastify: FastifyInstance) {
-  fastify.register(fastifyCors, {
+  await fastify.register(fastifyCors, {
     origin: "*",
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
