@@ -8,7 +8,7 @@ export class UserController implements IUser {
   async CreateUser(
     data: Pick<
       UserType,
-      "email" | "name" | "username" | "avatar_url" | "birthdate" | "password"
+      "email" | "name" | "username" | "avatar_key" | "birthdate" | "password"
     >,
   ): Promise<Omit<UserType, "password">> {
     const hashedPassword = await bcrypt.hash(data.password, 12);
@@ -18,7 +18,7 @@ export class UserController implements IUser {
         email: data.email,
         name: data.name,
         username: data.username,
-        avatar_url: data.avatar_url,
+        avatar_key: data.avatar_key,
         birth_date: data.birthdate,
         password: hashedPassword,
       })
@@ -27,7 +27,7 @@ export class UserController implements IUser {
         email: usersTable.email,
         name: usersTable.name,
         username: usersTable.username,
-        avatar_url: usersTable.avatar_url,
+        avatar_key: usersTable.avatar_key,
         birthdate: usersTable.birth_date,
         created_at: usersTable.created_at,
         updated_at: usersTable.updated_at,
@@ -46,7 +46,7 @@ export class UserController implements IUser {
         email: usersTable.email,
         name: usersTable.name,
         username: usersTable.username,
-        avatar_url: usersTable.avatar_url,
+        avatar_key: usersTable.avatar_key,
         birthdate: usersTable.birth_date,
         created_at: usersTable.created_at,
         updated_at: usersTable.updated_at,
@@ -69,7 +69,7 @@ export class UserController implements IUser {
         email: usersTable.email,
         name: usersTable.name,
         username: usersTable.username,
-        avatar_url: usersTable.avatar_url,
+        avatar_key: usersTable.avatar_key,
         birthdate: usersTable.birth_date,
         created_at: usersTable.created_at,
         updated_at: usersTable.updated_at,
@@ -92,7 +92,7 @@ export class UserController implements IUser {
         email: usersTable.email,
         name: usersTable.name,
         username: usersTable.username,
-        avatar_url: usersTable.avatar_url,
+        avatar_key: usersTable.avatar_key,
         birthdate: usersTable.birth_date,
         created_at: usersTable.created_at,
         updated_at: usersTable.updated_at,
@@ -115,7 +115,7 @@ export class UserController implements IUser {
         email: usersTable.email,
         name: usersTable.name,
         username: usersTable.username,
-        avatar_url: usersTable.avatar_url,
+        avatar_key: usersTable.avatar_key,
         birthdate: usersTable.birth_date,
         created_at: usersTable.created_at,
         updated_at: usersTable.updated_at,
@@ -135,7 +135,7 @@ export class UserController implements IUser {
     id: UserType["id"],
     data: Pick<
       UserType,
-      "email" | "name" | "username" | "avatar_url" | "birthdate"
+      "email" | "name" | "username" | "avatar_key" | "birthdate"
     >,
   ): Promise<Omit<UserType, "password">> {
     const [response] = await database
@@ -150,7 +150,7 @@ export class UserController implements IUser {
         email: usersTable.email,
         name: usersTable.name,
         username: usersTable.username,
-        avatar_url: usersTable.avatar_url,
+        avatar_key: usersTable.avatar_key,
         birthdate: usersTable.birth_date,
         created_at: usersTable.created_at,
         updated_at: usersTable.updated_at,
@@ -190,7 +190,7 @@ export class UserController implements IUser {
         email: usersTable.email,
         name: usersTable.name,
         username: usersTable.username,
-        avatar_url: usersTable.avatar_url,
+        avatar_key: usersTable.avatar_key,
         birthdate: usersTable.birth_date,
         created_at: usersTable.created_at,
         updated_at: usersTable.updated_at,
@@ -215,7 +215,7 @@ export class UserController implements IUser {
         email: usersTable.email,
         name: usersTable.name,
         username: usersTable.username,
-        avatar_url: usersTable.avatar_url,
+        avatar_key: usersTable.avatar_key,
         birthdate: usersTable.birth_date,
         created_at: usersTable.created_at,
         updated_at: usersTable.updated_at,

@@ -28,7 +28,7 @@ export async function AuthRoutes(fastify: FastifyInstance) {
           email: true,
           name: true,
           username: true,
-          avatar_url: true,
+          avatar_key: true,
           birthdate: true,
           password: true,
         }),
@@ -120,7 +120,7 @@ export async function AuthRoutes(fastify: FastifyInstance) {
 
         return res.code(200).send({
           status: "success",
-          message: "User logged in successfully",
+          message: "User loged in successfully",
           data: {
             user,
             accessToken,
@@ -208,7 +208,7 @@ export async function AuthRoutes(fastify: FastifyInstance) {
             return res.code(400).send({
               status: "error",
               message: "Failed to refresh access token",
-              error: "Invalid refresh token type",
+              error: "Invalid refresh token",
             });
           }
         } catch (error) {

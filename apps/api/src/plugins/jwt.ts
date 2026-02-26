@@ -1,8 +1,8 @@
 import { FastifyInstance } from "fastify";
 import { fastifyJwt } from "@fastify/jwt";
-import { environment } from "@config/environment";
 import cookie from "@fastify/cookie";
 import fp from "fastify-plugin";
+import { environment } from "@/config/environment";
 
 async function Jwt(fastify: FastifyInstance) {
   await fastify.register(cookie);

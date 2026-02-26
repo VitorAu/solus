@@ -1,3 +1,4 @@
+CREATE TYPE "public"."media_type" AS ENUM('image', 'video');--> statement-breakpoint
 CREATE TABLE "follows" (
 	"user_id" uuid NOT NULL,
 	"following_id" uuid NOT NULL,
@@ -18,10 +19,18 @@ CREATE TABLE "posts" (
 	"user_id" uuid NOT NULL,
 	"like_count" integer DEFAULT 0 NOT NULL,
 	"description" text,
-	"media" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp
+);
+--> statement-breakpoint
+CREATE TABLE "postMedias" (
+	"id" text PRIMARY KEY NOT NULL,
+	"order" integer NOT NULL,
+	"media_type" "media_type" NOT NULL,
+	"post_id" uuid NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "users" (
@@ -29,7 +38,7 @@ CREATE TABLE "users" (
 	"email" varchar(255) NOT NULL,
 	"name" varchar(255) NOT NULL,
 	"username" varchar(40) NOT NULL,
-	"avatar_url" varchar(2048),
+	"avatar_key" varchar(2048),
 	"password" varchar(255) NOT NULL,
 	"birth_date" date NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
@@ -42,4 +51,5 @@ CREATE TABLE "users" (
 ALTER TABLE "follows" ADD CONSTRAINT "follows_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "follows" ADD CONSTRAINT "follows_following_id_users_id_fk" FOREIGN KEY ("following_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "followCodes" ADD CONSTRAINT "followCodes_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "posts" ADD CONSTRAINT "posts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "posts" ADD CONSTRAINT "posts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "postMedias" ADD CONSTRAINT "postMedias_post_id_posts_id_fk" FOREIGN KEY ("post_id") REFERENCES "public"."posts"("id") ON DELETE no action ON UPDATE no action;
