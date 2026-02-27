@@ -16,51 +16,40 @@ import {
   validatorCompiler,
 } from "fastify-type-provider-zod";
 
-const isDev = environment.nodeEnvironment === "development";
+export function CreateServer() {
+  const isDev = environment.nodeEnvironment === "development";
 
-const logger = {
-  development: {
-    transport: {
-      target: "pino-pretty",
-      options: {
-        colorize: true,
-        translateTime: "SYS:standard",
-        ignore: "pid,hostname",
+  const logger = {
+    development: {
+      transport: {
+        target: "pino-pretty",
+        options: {
+          colorize: true,
+          translateTime: "SYS:standard",
+          ignore: "pid,hostname",
+        },
       },
     },
-  },
-  production: false,
-};
+    production: false,
+  };
 
-const server = fastify({
-  logger: isDev ? logger.development : logger.production,
-});
+  const server = fastify({
+    logger: isDev ? logger.development : logger.production,
+  });
 
-server.setValidatorCompiler(validatorCompiler);
-server.setSerializerCompiler(serializerCompiler);
+  server.setValidatorCompiler(validatorCompiler);
+  server.setSerializerCompiler(serializerCompiler);
 
-server.register(SwaggerPlugin);
-server.register(SwaggerUiPlugin);
-server.register(JwtPlugin);
-server.register(CorsPlugin);
-server.register(MultipartPlugin);
+  server.register(SwaggerPlugin);
+  server.register(SwaggerUiPlugin);
+  server.register(JwtPlugin);
+  server.register(CorsPlugin);
+  server.register(MultipartPlugin);
 
-server.register(HealthRoutes, { prefix: "/api/v1/health" });
-server.register(MediaRoutes, { prefix: "/api/v1/media" });
-server.register(AuthRoutes, { prefix: "/api/v1/auth" });
-server.register(UserRoutes, { prefix: "/api/v1/user" });
+  server.register(HealthRoutes, { prefix: "/api/v1/health" });
+  server.register(MediaRoutes, { prefix: "/api/v1/media" });
+  server.register(AuthRoutes, { prefix: "/api/v1/auth" });
+  server.register(UserRoutes, { prefix: "/api/v1/user" });
 
-server.listen({ port: environment.serverPort, host: "0.0.0.0" }, (error) => {
-  if (error) {
-    server.log.error(error);
-    process.exit(1);
-  }
-  server.log.info(
-    `🚀 HTTP server running on http://0.0.0.0:${environment.serverPort}`,
-  );
-  server.log.info(
-    `📚 API documentation available at  http://0.0.0.0:${environment.serverPort}/documentation`,
-  );
-});
-
-export { server };
+  return server;
+}

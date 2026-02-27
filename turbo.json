@@ -17,6 +17,10 @@
       "cache": false,
       "persistent": true
     },
-    "lint": {}
+    "prod": {
+      "cache": false,
+      "persistent": true
+    },
+    "test": {}
   }
 }

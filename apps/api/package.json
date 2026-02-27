@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "type": "module",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.997.0",
     "@aws-sdk/s3-request-presigner": "^3.999.0",
@@ -23,10 +24,10 @@
     "zod-openapi": "^5.4.6"
   },
   "scripts": {
-    "dev": "tsx watch --env-file=../../.env.dev src/server.ts",
-    "prod": "node --env-file=../../.env.prod dist/server.js",
+    "dev": "tsx watch --env-file=../../.env.dev src/main.ts",
+    "prod": "node --env-file=../../.env.prod dist/src/main.js",
     "build": "tsc",
-    "lint": "eslint ."
+    "test": "tsx dist/tests/server.test.js"
   },
   "devDependencies": {
     "@repo/database": "*",

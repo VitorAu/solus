@@ -12,7 +12,8 @@
     "app::dev": "turbo run dev",
     "app::prod": "turbo run prod",
     "app::build": "turbo run build",
-    "app::format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "app::format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "app::test": "turbo run test"
   },
   "devDependencies": {
     "dotenv-cli": "^11.0.0",

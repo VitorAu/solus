@@ -5,7 +5,7 @@
 
   "compilerOptions": {
     "baseUrl": "./src",
-    "rootDir": "./src",
+    "rootDirs": ["./src", "./tests"],
     "outDir": "./dist",
 
     "paths": {
@@ -20,6 +20,6 @@
     },
   },
 
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "tests/**/*"],
   "exclude": ["node_modules", "dist"],
 }

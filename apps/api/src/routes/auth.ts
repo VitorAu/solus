@@ -1,4 +1,5 @@
 import { UserController } from "@/controller/user";
+import { database } from "@repo/database";
 import {
   ErrorResponseSchema,
   SuccessResponseNoDataSchema,
@@ -9,7 +10,7 @@ import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { FastifyInstance } from "fastify/types/instance";
 import { z } from "zod";
 
-const userController = new UserController();
+const userController = new UserController(database);
 
 export async function AuthRoutes(fastify: FastifyInstance) {
   fastify.withTypeProvider<ZodTypeProvider>().post(

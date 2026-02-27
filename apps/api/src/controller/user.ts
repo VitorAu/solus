@@ -1,10 +1,16 @@
 import { IUser } from "@repo/interfaces";
 import { UserType } from "@repo/types";
-import { database, usersTable } from "@repo/database";
+import { usersTable } from "@repo/database";
 import bcrypt from "bcrypt";
 import { isNull, and, eq } from "drizzle-orm";
+import { NodePgDatabase } from "drizzle-orm/node-postgres";
 
 export class UserController implements IUser {
+  private readonly database: NodePgDatabase<Record<string, never>>;
+  constructor(database: NodePgDatabase<Record<string, never>>) {
+    this.database = database;
+  }
+
   async CreateUser(
     data: Pick<
       UserType,
@@ -12,7 +18,7 @@ export class UserController implements IUser {
     >,
   ): Promise<Omit<UserType, "password">> {
     const hashedPassword = await bcrypt.hash(data.password, 12);
-    const [response] = await database
+    const [response] = await this.database
       .insert(usersTable)
       .values({
         email: data.email,
@@ -40,7 +46,7 @@ export class UserController implements IUser {
   }
 
   async GetUserById(id: UserType["id"]): Promise<Omit<UserType, "password">> {
-    const [response] = await database
+    const [response] = await this.database
       .select({
         id: usersTable.id,
         email: usersTable.email,
@@ -63,7 +69,7 @@ export class UserController implements IUser {
   async GetUserByEmail(
     email: UserType["email"],
   ): Promise<Omit<UserType, "password">> {
-    const [response] = await database
+    const [response] = await this.database
       .select({
         id: usersTable.id,
         email: usersTable.email,
@@ -86,7 +92,7 @@ export class UserController implements IUser {
   async GetUserByName(
     name: UserType["name"],
   ): Promise<Omit<UserType, "password">> {
-    const [response] = await database
+    const [response] = await this.database
       .select({
         id: usersTable.id,
         email: usersTable.email,
@@ -109,7 +115,7 @@ export class UserController implements IUser {
   async GetUserByUsername(
     username: UserType["username"],
   ): Promise<Omit<UserType, "password">> {
-    const [response] = await database
+    const [response] = await this.database
       .select({
         id: usersTable.id,
         email: usersTable.email,
@@ -137,7 +143,7 @@ export class UserController implements IUser {
       Pick<UserType, "email" | "name" | "username" | "avatar_key" | "birthdate">
     >,
   ): Promise<Omit<UserType, "password">> {
-    const [response] = await database
+    const [response] = await this.database
       .update(usersTable)
       .set({
         ...data,
@@ -166,7 +172,7 @@ export class UserController implements IUser {
     password: UserType["password"],
     newPassword: string,
   ): Promise<Omit<UserType, "password">> {
-    const [user] = await database
+    const [user] = await this.database
       .select({ password: usersTable.password })
       .from(usersTable)
       .where(and(eq(usersTable.id, id), isNull(usersTable.deleted_at)));
@@ -177,7 +183,7 @@ export class UserController implements IUser {
     if (!isValid) throw new Error("Invalid current password");
 
     const hashedPassword = await bcrypt.hash(newPassword, 12);
-    const [response] = await database
+    const [response] = await this.database
       .update(usersTable)
       .set({
         password: hashedPassword,
@@ -202,7 +208,7 @@ export class UserController implements IUser {
   }
 
   async DeleteUser(id: string): Promise<void> {
-    const [response] = await database
+    const [response] = await this.database
       .update(usersTable)
       .set({
         updated_at: new Date(),
@@ -228,7 +234,7 @@ export class UserController implements IUser {
     id: UserType["id"],
     password: UserType["password"],
   ): Promise<boolean> {
-    const [user] = await database
+    const [user] = await this.database
       .select({ password: usersTable.password })
       .from(usersTable)
       .where(and(eq(usersTable.id, id), isNull(usersTable.deleted_at)));

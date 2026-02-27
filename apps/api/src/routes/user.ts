@@ -1,5 +1,6 @@
 import { UserController } from "@/controller/user";
 import { Auth } from "@/hooks/auth";
+import { database } from "@repo/database";
 import {
   ErrorResponseSchema,
   SuccessResponseNoDataSchema,
@@ -10,7 +11,7 @@ import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
 
-const userController = new UserController();
+const userController = new UserController(database);
 
 export async function UserRoutes(fastify: FastifyInstance) {
   fastify.addHook("preHandler", Auth);
