@@ -1,16 +1,27 @@
-## 📝 Summary
-- 
+## Description
 
-## ✨ Created
-- [ ] 
-- [ ] 
+Explain the changes introduced in this PR.
 
-## 🔧 Refactored
-- [ ] 
-- [ ] 
+---
 
-## 📦 Dependencies
-- [ ] 
+## Type of change
 
-## 🗑️ Deleted
-- [ ]
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Refactor
+- [ ] Documentation
+- [ ] Test improvement
+
+---
+
+## Checklist
+
+- [ ] Code builds successfully
+- [ ] Tests pass
+- [ ] No sensitive data committed
+
+---
+
+## Screenshots
+
+Add screenshots if UI changes were made.
