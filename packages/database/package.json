@@ -1,16 +1,13 @@
 {
   "name": "@repo/database",
   "version": "1.0.0",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "index.js",
   "license": "MIT",
-  "type": "module",
   "devDependencies": {
     "@repo/typescript": "*",
     "@types/pg": "^8.16.0",
     "drizzle-kit": "^0.31.9",
     "gel": "^2.2.0",
-    "tsup": "^8.5.1",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   },
@@ -23,7 +20,8 @@
     "generate": "yarn drizzle-kit generate",
     "migrate": "yarn tsx src/migrate.ts",
     "dev": "tsc --watch --preserveWatchOutput",
-    "build": "tsup"
+    "build": "tsc",
+    "lint": "eslint ."
   },
   "exports": {
     ".": "./dist/index.js"

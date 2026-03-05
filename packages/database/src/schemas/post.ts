@@ -8,6 +8,7 @@ export const postsTable = pgTable("posts", {
     .references(() => usersTable.id, { onDelete: "cascade" }),
   like_count: integer().notNull().default(0),
   description: text(),
+  media: text(),
   created_at: timestamp().defaultNow().notNull(),
   updated_at: timestamp().defaultNow().notNull(),
   deleted_at: timestamp(),

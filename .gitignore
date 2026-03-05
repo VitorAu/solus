@@ -12,6 +12,7 @@ node_modules/
 !.yarn/versions
 
 # Yarn lockfiles
+yarn.lock
 package-lock.json
 pnpm-lock.yaml
 
