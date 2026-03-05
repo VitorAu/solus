@@ -7,11 +7,12 @@ runs:
       uses: actions/setup-node@v4
       with:
         node-version: 22
-        cache: "yarn"
 
     - name: Enable Corepack
       shell: bash
-      run: corepack enable
+      run: |
+        corepack enable
+        corepack prepare yarn@4.12.0 --activate
 
     - name: Install dependencies
       shell: bash
