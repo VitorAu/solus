@@ -4,7 +4,7 @@ export interface IUser {
   CreateUser(
     data: Pick<
       UserType,
-      "email" | "name" | "username" | "avatar_url" | "birthdate" | "password"
+      "email" | "name" | "username" | "avatar_key" | "birthdate" | "password"
     >,
   ): Promise<Omit<UserType, "password">>;
 
@@ -17,9 +17,8 @@ export interface IUser {
 
   UpdateUser(
     id: UserType["id"],
-    data: Pick<
-      UserType,
-      "email" | "name" | "username" | "avatar_url" | "birthdate" | "password"
+    data: Partial<
+      Pick<UserType, "email" | "name" | "username" | "avatar_key" | "birthdate">
     >,
   ): Promise<Omit<UserType, "password">>;
   UpdateUserPassword(

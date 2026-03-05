@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1771617977286,
-      "tag": "0000_create_users_table",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1771618023936,
-      "tag": "0001_create_posts_table",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1771618263970,
-      "tag": "0002_create_follows_table",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1771691191154,
-      "tag": "0003_create_followCodes_table",
+      "when": 1772123299712,
+      "tag": "0000_init",
       "breakpoints": true
     }
   ]
