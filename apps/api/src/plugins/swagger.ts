@@ -4,7 +4,7 @@ import { jsonSchemaTransform } from "fastify-type-provider-zod";
 import fp from "fastify-plugin";
 
 async function Swagger(fastify: FastifyInstance) {
-  fastify.register(fastifySwagger, {
+  await fastify.register(fastifySwagger, {
     openapi: {
       info: {
         title: "Typus API",

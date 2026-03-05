@@ -1,0 +1,28 @@
+{
+  "date": "2026-02-27T14:08:34.534Z",
+  "argv": [
+    "/Users/santiago/.nvm/versions/node/v24.13.1/bin/node",
+    "/Users/santiago/code/projects/solus/apps/api/tests/server.test.ts"
+  ],
+  "execArgv": [
+    "--import=file:///Users/santiago/code/projects/solus/node_modules/@tapjs/typescript/dist/esm/import.mjs",
+    "--import=file:///Users/santiago/code/projects/solus/node_modules/@tapjs/mock/dist/esm/import.mjs",
+    "--enable-source-maps",
+    "--import=file:///Users/santiago/code/projects/solus/node_modules/@tapjs/processinfo/dist/esm/import.mjs"
+  ],
+  "NODE_OPTIONS": "\"--import=file:///Users/santiago/code/projects/solus/node_modules/@tapjs/processinfo/dist/esm/import.mjs\"",
+  "cwd": "/Users/santiago/code/projects/solus/apps/api",
+  "pid": 41443,
+  "ppid": 41439,
+  "parent": null,
+  "uuid": "97bd3434-d6d0-4fa6-818d-498a0ab6cd6d",
+  "files": [
+    "/Users/santiago/code/projects/solus/apps/api/tests/server.test.ts"
+  ],
+  "sources": {},
+  "root": "97bd3434-d6d0-4fa6-818d-498a0ab6cd6d",
+  "externalID": "tests/server.test.ts",
+  "code": 1,
+  "signal": null,
+  "runtime": 554.451125
+}
