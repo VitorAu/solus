@@ -13,10 +13,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup dependencies
-        uses: ./.github/actions/setup-node-dependencies.yml
+        uses: ./.github/actions/setup-node-dependencies/action.yml
 
       - name: Create env file
-        uses: ./.github/actions/create-env-file.yml
+        uses: ./.github/actions/create-env-file/action.yml
 
       - name: Build applications
         run: yarn app::build
