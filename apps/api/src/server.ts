@@ -1,5 +1,3 @@
-import "dotenv/config";
-
 import { environment } from "@/config/environment";
 import { CorsPlugin } from "@/plugins/cors";
 import { JwtPlugin } from "@/plugins/jwt";
@@ -10,14 +8,15 @@ import { AuthRoutes } from "@/routes/auth";
 import { HealthRoutes } from "@/routes/health";
 import { MediaRoutes } from "@/routes/media";
 import { UserRoutes } from "@/routes/user";
+import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { fastify } from "fastify";
 import {
   serializerCompiler,
   validatorCompiler,
 } from "fastify-type-provider-zod";
 
-export function CreateServer() {
-  const isDev = environment.nodeEnvironment === "development";
+export function CreateServer(database: NodePgDatabase<any>) {
+  const isDev = environment.nodeEnv === "development";
 
   const logger = {
     development: {
@@ -48,8 +47,8 @@ export function CreateServer() {
 
   server.register(HealthRoutes, { prefix: "/api/v1/health" });
   server.register(MediaRoutes, { prefix: "/api/v1/media" });
-  server.register(AuthRoutes, { prefix: "/api/v1/auth" });
-  server.register(UserRoutes, { prefix: "/api/v1/user" });
+  server.register(AuthRoutes, { prefix: "/api/v1/auth", database: database });
+  server.register(UserRoutes, { prefix: "/api/v1/user", database: database });
 
   return server;
 }

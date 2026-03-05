@@ -6,8 +6,8 @@ import { isNull, and, eq } from "drizzle-orm";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
 
 export class UserController implements IUser {
-  private readonly database: NodePgDatabase<Record<string, never>>;
-  constructor(database: NodePgDatabase<Record<string, never>>) {
+  private readonly database: NodePgDatabase<any>;
+  constructor(database: NodePgDatabase<any>) {
     this.database = database;
   }
 

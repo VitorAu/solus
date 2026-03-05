@@ -22,23 +22,25 @@ can share code safely and consistently.
 
 ## Tech Stack
 
--   Node.js
--   TypeScript
--   TurboRepo
--   PostgreSQL
--   Drizzle ORM
--   Zod
--   Docker
+- Node.js
+- TypeScript
+- TurboRepo
+- PostgreSQL
+- Drizzle ORM
+- Zod
+- Docker
 
 ## Scripts
 
-  Script            Description
-  ----------------- -----------------------------
-  app::dev          Run all apps in development
-  app::build        Build all packages
-  app::format       Format code using Prettier
-  docker::compose   Start local services
-  docker::stop      Stop containers
+Script Description
+
+---
+
+app::dev Run all apps in development
+app::build Build all packages
+app::format Format code using Prettier
+docker::compose Start local services
+docker::stop Stop containers
 
 ## Environment Variables
 
@@ -51,11 +53,11 @@ Never commit real secrets.
 
 ## Project Goals
 
--   Clean architecture
--   Shared types across services
--   Scalable monorepo
--   Strong type safety
--   Fast builds
+- Clean architecture
+- Shared types across services
+- Scalable monorepo
+- Strong type safety
+- Fast builds
 
 ## License
 

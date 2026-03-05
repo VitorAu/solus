@@ -1,7 +1,8 @@
 import { environment } from "@/config/environment";
 import { CreateServer } from "@/server";
+import { database } from "@repo/database";
 
-const server = CreateServer();
+const server = CreateServer(database);
 
 async function Main() {
   try {

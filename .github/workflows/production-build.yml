@@ -1,0 +1,22 @@
+name: Production build
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-node-dependencies.yml
+
+      - name: Create env file
+        uses: ./.github/actions/create-env-file.yml
+
+      - name: Build applications
+        run: yarn app::build

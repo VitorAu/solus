@@ -1,20 +1,14 @@
-import { aws } from "@/config/aws";
+import { CreateAwsClient } from "@/config/aws";
 import { environment } from "@/config/environment";
-import {
-  PutObjectCommand,
-  PutObjectCommandInput,
-  GetObjectCommand,
-  GetObjectCommandInput,
-} from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
 import { MultipartFile } from "@fastify/multipart";
 import { ErrorResponseSchema, SuccessResponseSchema } from "@repo/types";
 import { randomUUID } from "crypto";
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { fileTypeFromBuffer } from "file-type";
-import { z } from "zod";
 import sharp from "sharp";
+import { z } from "zod";
 
 export function MediaRoutes(fastify: FastifyInstance) {
   fastify.withTypeProvider<ZodTypeProvider>().post(
@@ -48,6 +42,8 @@ export function MediaRoutes(fastify: FastifyInstance) {
     async (req, res) => {
       try {
         const files = req.body.files;
+        const aws = CreateAwsClient();
+
         if (!files) {
           return res.code(400).send({
             status: "error",

@@ -1,18 +1,25 @@
 import { UserController } from "@/controller/user";
-import { database } from "@repo/database";
 import {
   ErrorResponseSchema,
   SuccessResponseNoDataSchema,
   SuccessResponseSchema,
   UserSchema,
 } from "@repo/types";
+import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { FastifyInstance } from "fastify/types/instance";
 import { z } from "zod";
 
-const userController = new UserController(database);
+type AuthRoutesOpts = {
+  database: NodePgDatabase<any>;
+};
 
-export async function AuthRoutes(fastify: FastifyInstance) {
+export async function AuthRoutes(
+  fastify: FastifyInstance,
+  opts: AuthRoutesOpts,
+) {
+  const userController = new UserController(opts.database);
+
   fastify.withTypeProvider<ZodTypeProvider>().post(
     "/register",
     {
