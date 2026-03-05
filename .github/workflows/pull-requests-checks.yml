@@ -17,7 +17,7 @@ jobs:
         uses: ./.github/actions/setup-node-dependencies
 
       - name: Check formatting
-        run: yarn app::format:check
+        run: yarn app::format-check
 
       - name: Build applications
         run: yarn app::build
