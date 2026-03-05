@@ -10,13 +10,12 @@
 
     "paths": {
       "@/*": ["*"],
-      "@config/*": ["src/config/*"],
+      "@config/*": ["config/*"],
       "@routes/*": ["routes/*"],
       "@services/*": ["services/*"],
       "@interfaces/*": ["interfaces/*"],
       "@types/*": ["types/*"],
       "@plugins/*": ["plugins/*"],
-      "@hooks/*": ["hooks/*"],
     },
   },
 

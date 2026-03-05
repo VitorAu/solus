@@ -10,20 +10,13 @@
     },
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "dist/**", "!.next/cache/**"],
-      "inputs": ["$TURBO_DEFAULTS$", ".env.prod"]
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/*"]
     },
     "dev": {
-      "dependsOn": ["^build"],
-      "cache": false,
-      "persistent": true,
-      "inputs": ["$TURBO_DEFAULTS$", ".env.dev"]
-    },
-    "prod": {
-      "dependsOn": ["build"],
       "cache": false,
       "persistent": true
     },
-    "test": {}
+    "lint": {}
   }
 }

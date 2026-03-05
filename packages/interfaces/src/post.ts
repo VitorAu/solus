@@ -3,7 +3,7 @@ import { PostType } from "@repo/types";
 export interface IPost {
   CreatePost(
     userId: PostType["user_id"],
-    data: PostType["description"],
+    data: Pick<PostType, "media" | "description">,
   ): Promise<PostType>;
 
   GetPostById(id: PostType["id"]): Promise<PostType>;
@@ -11,7 +11,7 @@ export interface IPost {
 
   UpdatePost(
     id: PostType["id"],
-    data: PostType["description"],
+    data: Pick<PostType, "media" | "description">,
   ): Promise<PostType>;
 
   DeletePost(id: PostType["id"]): Promise<void>;
