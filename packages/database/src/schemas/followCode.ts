@@ -5,7 +5,7 @@ export const followCodesTable = pgTable("followCodes", {
   id: text().notNull().primaryKey(),
   user_id: uuid()
     .notNull()
-    .references(() => usersTable.id),
+    .references(() => usersTable.id, { onDelete: "cascade" }),
   created_at: timestamp().defaultNow().notNull(),
   expires_at: timestamp().notNull(),
 });

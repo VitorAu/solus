@@ -16,7 +16,7 @@ export const postMediasTable = pgTable("postMedias", {
   media_type: mediaTypeEnum().notNull(),
   post_id: uuid()
     .notNull()
-    .references(() => postsTable.id),
+    .references(() => postsTable.id, { onDelete: "cascade" }),
   created_at: timestamp().defaultNow().notNull(),
   updated_at: timestamp().defaultNow().notNull(),
 });
