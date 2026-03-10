@@ -1,7 +1,6 @@
-import { boolean, pgTable, timestamp, uuid, unique } from "drizzle-orm/pg-core";
-import { postsTable } from "./post";
-import { usersTable } from "./user";
+import { boolean, pgTable, timestamp, unique, uuid } from "drizzle-orm/pg-core";
 import { postCommentsTable } from "./postComment";
+import { usersTable } from "./user";
 
 export const postCommentLikesTable = pgTable(
   "postCommentLikes",

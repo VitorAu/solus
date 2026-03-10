@@ -1,10 +1,4 @@
-import {
-  pgTable,
-  uuid,
-  timestamp,
-  primaryKey,
-  unique,
-} from "drizzle-orm/pg-core";
+import { pgTable, uuid, timestamp, boolean, unique } from "drizzle-orm/pg-core";
 import { usersTable } from "./user";
 
 export const followsTable = pgTable(
@@ -17,6 +11,7 @@ export const followsTable = pgTable(
     following_id: uuid()
       .notNull()
       .references(() => usersTable.id, { onDelete: "cascade" }),
+    is_following: boolean().notNull().default(true),
     created_at: timestamp().defaultNow().notNull(),
     updated_at: timestamp().defaultNow().notNull(),
   },

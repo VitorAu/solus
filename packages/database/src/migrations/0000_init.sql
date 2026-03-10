@@ -3,9 +3,20 @@ CREATE TABLE "follows" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" uuid NOT NULL,
 	"following_id" uuid NOT NULL,
+	"is_following" boolean DEFAULT true NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "follow_unique" UNIQUE("user_id","following_id")
+);
+--> statement-breakpoint
+CREATE TABLE "followAnalytics" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" uuid NOT NULL,
+	"following" integer DEFAULT 0 NOT NULL,
+	"followers" integer DEFAULT 0 NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "follow_analytics_unique" UNIQUE("user_id")
 );
 --> statement-breakpoint
 CREATE TABLE "followCodes" (
@@ -25,6 +36,15 @@ CREATE TABLE "posts" (
 	"deleted_at" timestamp
 );
 --> statement-breakpoint
+CREATE TABLE "postAnalytics" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"post_id" uuid,
+	"likes" integer DEFAULT 0 NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "post_analytics_unique" UNIQUE("post_id")
+);
+--> statement-breakpoint
 CREATE TABLE "postComments" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"post_id" uuid NOT NULL,
@@ -34,6 +54,15 @@ CREATE TABLE "postComments" (
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp
+);
+--> statement-breakpoint
+CREATE TABLE "postCommentAnalytics" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"comment_id" uuid,
+	"likes" integer DEFAULT 0 NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "post_comment_analytics_unique" UNIQUE("comment_id")
 );
 --> statement-breakpoint
 CREATE TABLE "postCommentLikes" (
@@ -82,11 +111,14 @@ CREATE TABLE "users" (
 --> statement-breakpoint
 ALTER TABLE "follows" ADD CONSTRAINT "follows_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "follows" ADD CONSTRAINT "follows_following_id_users_id_fk" FOREIGN KEY ("following_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "followAnalytics" ADD CONSTRAINT "followAnalytics_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "followCodes" ADD CONSTRAINT "followCodes_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "posts" ADD CONSTRAINT "posts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "postAnalytics" ADD CONSTRAINT "postAnalytics_post_id_posts_id_fk" FOREIGN KEY ("post_id") REFERENCES "public"."posts"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "postComments" ADD CONSTRAINT "postComments_post_id_posts_id_fk" FOREIGN KEY ("post_id") REFERENCES "public"."posts"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "postComments" ADD CONSTRAINT "postComments_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "postComments" ADD CONSTRAINT "fk_post_comments_parent_id" FOREIGN KEY ("parrent_comment_id") REFERENCES "public"."postComments"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "postCommentAnalytics" ADD CONSTRAINT "postCommentAnalytics_comment_id_postComments_id_fk" FOREIGN KEY ("comment_id") REFERENCES "public"."postComments"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "postCommentLikes" ADD CONSTRAINT "postCommentLikes_comment_id_postComments_id_fk" FOREIGN KEY ("comment_id") REFERENCES "public"."postComments"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "postCommentLikes" ADD CONSTRAINT "postCommentLikes_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "postLikes" ADD CONSTRAINT "postLikes_post_id_posts_id_fk" FOREIGN KEY ("post_id") REFERENCES "public"."posts"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

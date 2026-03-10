@@ -7,11 +7,10 @@ export interface IFollow {
   ): Promise<FollowType>;
 
   GetFollowsByUserId(userId: FollowType["user_id"]): Promise<FollowType[]>;
-  GetFollowerCountByUserId(userId: FollowType["user_id"]): Promise<number>;
   GetIsUerFollowing(
     userId: FollowType["user_id"],
     followingId: FollowType["following_id"],
-  ): Promise<boolean>;
+  ): Promise<FollowType>;
 
   DeleteFollow(
     userId: FollowType["user_id"],
