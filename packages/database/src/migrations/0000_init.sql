@@ -20,7 +20,7 @@ CREATE TABLE "followAnalytics" (
 );
 --> statement-breakpoint
 CREATE TABLE "followCodes" (
-	"id" text PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" uuid NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"expires_at" timestamp NOT NULL

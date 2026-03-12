@@ -1,16 +1,11 @@
 import { FollowAnalyticsType } from "@repo/types";
 
-export interface IFollowCode {
+export interface IFollowAnalytics {
   CreateFollowAnalytics(
     userId: FollowAnalyticsType["user_id"],
   ): Promise<FollowAnalyticsType>;
 
-  GetFollowerAmount(
-    user_id: FollowAnalyticsType["user_id"],
+  GetFollowAnalytics(
+    userId: FollowAnalyticsType["user_id"],
   ): Promise<FollowAnalyticsType>;
-  GetFollowingAmount(
-    user_id: FollowAnalyticsType["user_id"],
-  ): Promise<FollowAnalyticsType>;
-
-  DeleteFollowCode(id: FollowAnalyticsType["id"]): Promise<void>;
 }

@@ -14,6 +14,8 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from "fastify-type-provider-zod";
+import { FollowRoutes } from "./routes/follow";
+import { AnalyticRoutes } from "./routes/analytic";
 
 export function CreateServer(database: NodePgDatabase<any>) {
   const isDev = environment.nodeEnv === "development";
@@ -48,7 +50,15 @@ export function CreateServer(database: NodePgDatabase<any>) {
   server.register(HealthRoutes, { prefix: "/api/v1/health" });
   server.register(MediaRoutes, { prefix: "/api/v1/media" });
   server.register(AuthRoutes, { prefix: "/api/v1/auth", database: database });
+  server.register(AnalyticRoutes, {
+    prefix: "/api/v1/analytics",
+    database: database,
+  });
   server.register(UserRoutes, { prefix: "/api/v1/user", database: database });
+  server.register(FollowRoutes, {
+    prefix: "/api/v1/follow",
+    database: database,
+  });
 
   return server;
 }
