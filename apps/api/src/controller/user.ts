@@ -1,9 +1,10 @@
 import { IUser } from "@repo/interfaces";
 import { UserType } from "@repo/types";
-import { usersTable } from "@repo/database";
+import { userTable } from "@repo/database";
 import bcrypt from "bcrypt";
 import { isNull, and, eq } from "drizzle-orm";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
+import { FollowAnalyticController } from "./followAnalytics";
 
 export class UserController implements IUser {
   private readonly database: NodePgDatabase<any>;
@@ -14,52 +15,62 @@ export class UserController implements IUser {
   async CreateUser(
     data: Pick<
       UserType,
-      "email" | "name" | "username" | "avatar_key" | "birthdate" | "password"
+      "email" | "name" | "username" | "avatar_key" | "birth_date" | "password"
     >,
-  ): Promise<Omit<UserType, "password">> {
+  ): Promise<Omit<UserType, "password" | "role">> {
     const hashedPassword = await bcrypt.hash(data.password, 12);
-    const [response] = await this.database
-      .insert(usersTable)
-      .values({
-        email: data.email,
-        name: data.name,
-        username: data.username,
-        avatar_key: data.avatar_key,
-        birth_date: data.birthdate,
-        password: hashedPassword,
-      })
-      .returning({
-        id: usersTable.id,
-        email: usersTable.email,
-        name: usersTable.name,
-        username: usersTable.username,
-        avatar_key: usersTable.avatar_key,
-        birthdate: usersTable.birth_date,
-        created_at: usersTable.created_at,
-        updated_at: usersTable.updated_at,
-        deleted_at: usersTable.deleted_at,
-      });
+    const response = await this.database.transaction(async (tx) => {
+      const [user] = await tx
+        .insert(userTable)
+        .values({
+          email: data.email,
+          name: data.name,
+          username: data.username,
+          avatar_key: data.avatar_key,
+          birth_date: data.birth_date,
+          password: hashedPassword,
+          role: "USER",
+        })
+        .returning({
+          id: userTable.id,
+          email: userTable.email,
+          name: userTable.name,
+          username: userTable.username,
+          avatar_key: userTable.avatar_key,
+          birth_date: userTable.birth_date,
+          created_at: userTable.created_at,
+          updated_at: userTable.updated_at,
+          deleted_at: userTable.deleted_at,
+        });
 
-    if (!response) throw new Error("Failed to create user");
+      if (!user) throw new Error("Failed to create user");
+
+      const followAnalyticsController = new FollowAnalyticController(tx);
+      await followAnalyticsController.CreateFollowAnalytic(user?.id);
+
+      return user;
+    });
 
     return response;
   }
 
-  async GetUserById(id: UserType["id"]): Promise<Omit<UserType, "password">> {
+  async GetUserById(
+    id: UserType["id"],
+  ): Promise<Omit<UserType, "password" | "role">> {
     const [response] = await this.database
       .select({
-        id: usersTable.id,
-        email: usersTable.email,
-        name: usersTable.name,
-        username: usersTable.username,
-        avatar_key: usersTable.avatar_key,
-        birthdate: usersTable.birth_date,
-        created_at: usersTable.created_at,
-        updated_at: usersTable.updated_at,
-        deleted_at: usersTable.deleted_at,
+        id: userTable.id,
+        email: userTable.email,
+        name: userTable.name,
+        username: userTable.username,
+        avatar_key: userTable.avatar_key,
+        birth_date: userTable.birth_date,
+        created_at: userTable.created_at,
+        updated_at: userTable.updated_at,
+        deleted_at: userTable.deleted_at,
       })
-      .from(usersTable)
-      .where(and(eq(usersTable.id, id), isNull(usersTable.deleted_at)));
+      .from(userTable)
+      .where(and(eq(userTable.id, id), isNull(userTable.deleted_at)));
 
     if (!response) throw new Error("Failed to find user");
 
@@ -68,21 +79,21 @@ export class UserController implements IUser {
 
   async GetUserByEmail(
     email: UserType["email"],
-  ): Promise<Omit<UserType, "password">> {
+  ): Promise<Omit<UserType, "password" | "role">> {
     const [response] = await this.database
       .select({
-        id: usersTable.id,
-        email: usersTable.email,
-        name: usersTable.name,
-        username: usersTable.username,
-        avatar_key: usersTable.avatar_key,
-        birthdate: usersTable.birth_date,
-        created_at: usersTable.created_at,
-        updated_at: usersTable.updated_at,
-        deleted_at: usersTable.deleted_at,
+        id: userTable.id,
+        email: userTable.email,
+        name: userTable.name,
+        username: userTable.username,
+        avatar_key: userTable.avatar_key,
+        birth_date: userTable.birth_date,
+        created_at: userTable.created_at,
+        updated_at: userTable.updated_at,
+        deleted_at: userTable.deleted_at,
       })
-      .from(usersTable)
-      .where(and(eq(usersTable.email, email), isNull(usersTable.deleted_at)));
+      .from(userTable)
+      .where(and(eq(userTable.email, email), isNull(userTable.deleted_at)));
 
     if (!response) throw new Error("Failed to find user");
 
@@ -91,21 +102,21 @@ export class UserController implements IUser {
 
   async GetUserByName(
     name: UserType["name"],
-  ): Promise<Omit<UserType, "password">> {
+  ): Promise<Omit<UserType, "password" | "role">> {
     const [response] = await this.database
       .select({
-        id: usersTable.id,
-        email: usersTable.email,
-        name: usersTable.name,
-        username: usersTable.username,
-        avatar_key: usersTable.avatar_key,
-        birthdate: usersTable.birth_date,
-        created_at: usersTable.created_at,
-        updated_at: usersTable.updated_at,
-        deleted_at: usersTable.deleted_at,
+        id: userTable.id,
+        email: userTable.email,
+        name: userTable.name,
+        username: userTable.username,
+        avatar_key: userTable.avatar_key,
+        birth_date: userTable.birth_date,
+        created_at: userTable.created_at,
+        updated_at: userTable.updated_at,
+        deleted_at: userTable.deleted_at,
       })
-      .from(usersTable)
-      .where(and(eq(usersTable.name, name), isNull(usersTable.deleted_at)));
+      .from(userTable)
+      .where(and(eq(userTable.name, name), isNull(userTable.deleted_at)));
 
     if (!response) throw new Error("Failed to find user");
 
@@ -114,22 +125,22 @@ export class UserController implements IUser {
 
   async GetUserByUsername(
     username: UserType["username"],
-  ): Promise<Omit<UserType, "password">> {
+  ): Promise<Omit<UserType, "password" | "role">> {
     const [response] = await this.database
       .select({
-        id: usersTable.id,
-        email: usersTable.email,
-        name: usersTable.name,
-        username: usersTable.username,
-        avatar_key: usersTable.avatar_key,
-        birthdate: usersTable.birth_date,
-        created_at: usersTable.created_at,
-        updated_at: usersTable.updated_at,
-        deleted_at: usersTable.deleted_at,
+        id: userTable.id,
+        email: userTable.email,
+        name: userTable.name,
+        username: userTable.username,
+        avatar_key: userTable.avatar_key,
+        birth_date: userTable.birth_date,
+        created_at: userTable.created_at,
+        updated_at: userTable.updated_at,
+        deleted_at: userTable.deleted_at,
       })
-      .from(usersTable)
+      .from(userTable)
       .where(
-        and(eq(usersTable.username, username), isNull(usersTable.deleted_at)),
+        and(eq(userTable.username, username), isNull(userTable.deleted_at)),
       );
 
     if (!response) throw new Error("Failed to find user");
@@ -140,26 +151,29 @@ export class UserController implements IUser {
   async UpdateUser(
     id: UserType["id"],
     data: Partial<
-      Pick<UserType, "email" | "name" | "username" | "avatar_key" | "birthdate">
+      Pick<
+        UserType,
+        "email" | "name" | "username" | "avatar_key" | "birth_date"
+      >
     >,
-  ): Promise<Omit<UserType, "password">> {
+  ): Promise<Omit<UserType, "password" | "role">> {
     const [response] = await this.database
-      .update(usersTable)
+      .update(userTable)
       .set({
         ...data,
         updated_at: new Date(),
       })
-      .where(and(eq(usersTable.id, id), isNull(usersTable.deleted_at)))
+      .where(and(eq(userTable.id, id), isNull(userTable.deleted_at)))
       .returning({
-        id: usersTable.id,
-        email: usersTable.email,
-        name: usersTable.name,
-        username: usersTable.username,
-        avatar_key: usersTable.avatar_key,
-        birthdate: usersTable.birth_date,
-        created_at: usersTable.created_at,
-        updated_at: usersTable.updated_at,
-        deleted_at: usersTable.deleted_at,
+        id: userTable.id,
+        email: userTable.email,
+        name: userTable.name,
+        username: userTable.username,
+        avatar_key: userTable.avatar_key,
+        birth_date: userTable.birth_date,
+        created_at: userTable.created_at,
+        updated_at: userTable.updated_at,
+        deleted_at: userTable.deleted_at,
       });
 
     if (!response) throw new Error("Failed to update user");
@@ -171,11 +185,11 @@ export class UserController implements IUser {
     id: UserType["id"],
     password: UserType["password"],
     newPassword: string,
-  ): Promise<Omit<UserType, "password">> {
+  ): Promise<Omit<UserType, "password" | "role">> {
     const [user] = await this.database
-      .select({ password: usersTable.password })
-      .from(usersTable)
-      .where(and(eq(usersTable.id, id), isNull(usersTable.deleted_at)));
+      .select({ password: userTable.password })
+      .from(userTable)
+      .where(and(eq(userTable.id, id), isNull(userTable.deleted_at)));
 
     if (!user) throw new Error("Failed to find user");
 
@@ -184,22 +198,22 @@ export class UserController implements IUser {
 
     const hashedPassword = await bcrypt.hash(newPassword, 12);
     const [response] = await this.database
-      .update(usersTable)
+      .update(userTable)
       .set({
         password: hashedPassword,
         updated_at: new Date(),
       })
-      .where(and(eq(usersTable.id, id), isNull(usersTable.deleted_at)))
+      .where(and(eq(userTable.id, id), isNull(userTable.deleted_at)))
       .returning({
-        id: usersTable.id,
-        email: usersTable.email,
-        name: usersTable.name,
-        username: usersTable.username,
-        avatar_key: usersTable.avatar_key,
-        birthdate: usersTable.birth_date,
-        created_at: usersTable.created_at,
-        updated_at: usersTable.updated_at,
-        deleted_at: usersTable.deleted_at,
+        id: userTable.id,
+        email: userTable.email,
+        name: userTable.name,
+        username: userTable.username,
+        avatar_key: userTable.avatar_key,
+        birth_date: userTable.birth_date,
+        created_at: userTable.created_at,
+        updated_at: userTable.updated_at,
+        deleted_at: userTable.deleted_at,
       });
 
     if (!response) throw new Error("Failed to update user password");
@@ -209,22 +223,22 @@ export class UserController implements IUser {
 
   async DeleteUser(id: string): Promise<void> {
     const [response] = await this.database
-      .update(usersTable)
+      .update(userTable)
       .set({
         updated_at: new Date(),
         deleted_at: new Date(),
       })
-      .where(and(eq(usersTable.id, id), isNull(usersTable.deleted_at)))
+      .where(and(eq(userTable.id, id), isNull(userTable.deleted_at)))
       .returning({
-        id: usersTable.id,
-        email: usersTable.email,
-        name: usersTable.name,
-        username: usersTable.username,
-        avatar_key: usersTable.avatar_key,
-        birthdate: usersTable.birth_date,
-        created_at: usersTable.created_at,
-        updated_at: usersTable.updated_at,
-        deleted_at: usersTable.deleted_at,
+        id: userTable.id,
+        email: userTable.email,
+        name: userTable.name,
+        username: userTable.username,
+        avatar_key: userTable.avatar_key,
+        birth_date: userTable.birth_date,
+        created_at: userTable.created_at,
+        updated_at: userTable.updated_at,
+        deleted_at: userTable.deleted_at,
       });
 
     if (!response) throw new Error("Failed to delete user");
@@ -235,9 +249,9 @@ export class UserController implements IUser {
     password: UserType["password"],
   ): Promise<boolean> {
     const [user] = await this.database
-      .select({ password: usersTable.password })
-      .from(usersTable)
-      .where(and(eq(usersTable.id, id), isNull(usersTable.deleted_at)));
+      .select({ password: userTable.password })
+      .from(userTable)
+      .where(and(eq(userTable.id, id), isNull(userTable.deleted_at)));
 
     if (!user) throw new Error("Failed to find user");
 

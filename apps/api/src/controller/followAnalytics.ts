@@ -1,53 +1,53 @@
-import { followAnalyticsTable } from "@repo/database";
-import { IFollowAnalytics } from "@repo/interfaces";
-import { FollowAnalyticsType } from "@repo/types";
+import { followAnalyticTable } from "@repo/database";
+import { IFollowAnalytic } from "@repo/interfaces";
+import { FollowAnalyticType } from "@repo/types";
 import { eq } from "drizzle-orm";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
 
-export class FollowAnalyticsController implements IFollowAnalytics {
+export class FollowAnalyticController implements IFollowAnalytic {
   private readonly database: NodePgDatabase<any>;
   constructor(database: NodePgDatabase<any>) {
     this.database = database;
   }
 
-  async CreateFollowAnalytics(
-    userId: FollowAnalyticsType["user_id"],
-  ): Promise<FollowAnalyticsType> {
+  async CreateFollowAnalytic(
+    userId: FollowAnalyticType["user_id"],
+  ): Promise<FollowAnalyticType> {
     const [response] = await this.database
-      .insert(followAnalyticsTable)
+      .insert(followAnalyticTable)
       .values({
         user_id: userId,
       })
       .returning({
-        id: followAnalyticsTable.id,
-        user_id: followAnalyticsTable.user_id,
-        followers: followAnalyticsTable.followers,
-        following: followAnalyticsTable.following,
-        created_at: followAnalyticsTable.created_at,
-        updated_at: followAnalyticsTable.updated_at,
+        id: followAnalyticTable.id,
+        user_id: followAnalyticTable.user_id,
+        follows_count: followAnalyticTable.follows_count,
+        followers_count: followAnalyticTable.followers_count,
+        created_at: followAnalyticTable.created_at,
+        updated_at: followAnalyticTable.updated_at,
       });
 
-    if (!response) throw new Error("Failed to create follow analytics");
+    if (!response) throw new Error("Failed to create follow analytic");
 
     return response;
   }
 
-  async GetFollowAnalytics(
-    userId: FollowAnalyticsType["user_id"],
-  ): Promise<FollowAnalyticsType> {
+  async GetFollowAnalytic(
+    userId: FollowAnalyticType["user_id"],
+  ): Promise<FollowAnalyticType> {
     const [response] = await this.database
       .select({
-        id: followAnalyticsTable.id,
-        user_id: followAnalyticsTable.user_id,
-        followers: followAnalyticsTable.followers,
-        following: followAnalyticsTable.following,
-        created_at: followAnalyticsTable.created_at,
-        updated_at: followAnalyticsTable.updated_at,
+        id: followAnalyticTable.id,
+        user_id: followAnalyticTable.user_id,
+        follows_count: followAnalyticTable.follows_count,
+        followers_count: followAnalyticTable.followers_count,
+        created_at: followAnalyticTable.created_at,
+        updated_at: followAnalyticTable.updated_at,
       })
-      .from(followAnalyticsTable)
-      .where(eq(followAnalyticsTable.user_id, userId));
+      .from(followAnalyticTable)
+      .where(eq(followAnalyticTable.user_id, userId));
 
-    if (!response) throw new Error("Failed to get follow analytics");
+    if (!response) throw new Error("Failed to get follow analytic");
 
     return response;
   }

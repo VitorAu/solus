@@ -1,17 +1,17 @@
 import { boolean, pgTable, timestamp, uuid, unique } from "drizzle-orm/pg-core";
-import { postsTable } from "./post";
-import { usersTable } from "./user";
+import { postTable } from "./post";
+import { userTable } from "./user";
 
-export const postLikesTable = pgTable(
-  "postLikes",
+export const postLikeTable = pgTable(
+  "post_like",
   {
     id: uuid().defaultRandom().primaryKey(),
     post_id: uuid()
       .notNull()
-      .references(() => postsTable.id, { onDelete: "cascade" }),
+      .references(() => postTable.id, { onDelete: "cascade" }),
     user_id: uuid()
       .notNull()
-      .references(() => usersTable.id, { onDelete: "cascade" }),
+      .references(() => userTable.id, { onDelete: "cascade" }),
     liked: boolean().notNull().default(true),
     created_at: timestamp().defaultNow().notNull(),
     updated_at: timestamp().defaultNow().notNull(),

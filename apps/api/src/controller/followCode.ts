@@ -1,4 +1,4 @@
-import { followCodesTable } from "@repo/database";
+import { followCodeTable } from "@repo/database";
 import { IFollowCode } from "@repo/interfaces";
 import { FollowCodeType } from "@repo/types";
 import { eq, and, gt } from "drizzle-orm";
@@ -17,16 +17,16 @@ export class FollowCodeController implements IFollowCode {
     const expiresAt = new Date(Date.now() + 1000 * 60 * 10);
 
     const [response] = await this.database
-      .insert(followCodesTable)
+      .insert(followCodeTable)
       .values({
         user_id: userId,
         expires_at: expiresAt,
       })
       .returning({
-        id: followCodesTable.id,
-        user_id: followCodesTable.user_id,
-        created_at: followCodesTable.created_at,
-        expires_at: followCodesTable.expires_at,
+        id: followCodeTable.id,
+        user_id: followCodeTable.user_id,
+        created_at: followCodeTable.created_at,
+        expires_at: followCodeTable.expires_at,
       });
 
     if (!response) throw new Error("Failed to create follow code");
@@ -40,12 +40,12 @@ export class FollowCodeController implements IFollowCode {
   ): Promise<boolean> {
     const [response] = await this.database
       .select({
-        id: followCodesTable.id,
-        expires_at: followCodesTable.expires_at,
+        id: followCodeTable.id,
+        expires_at: followCodeTable.expires_at,
       })
-      .from(followCodesTable)
+      .from(followCodeTable)
       .where(
-        and(eq(followCodesTable.id, id), eq(followCodesTable.user_id, user_id)),
+        and(eq(followCodeTable.id, id), eq(followCodeTable.user_id, user_id)),
       );
 
     if (!response) throw new Error("Failed to create follow code");

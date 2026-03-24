@@ -6,17 +6,17 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
-import { postsTable } from "./post";
+import { postTable } from "./post";
 
-export const mediaTypeEnum = pgEnum("media_type", ["image", "video"]);
+export const mediaTypeEnum = pgEnum("media", ["IMAGE", "VIDEO"]);
 
-export const postMediasTable = pgTable("postMedias", {
+export const postMediaTable = pgTable("post_media", {
   id: text().notNull().primaryKey(),
-  order: integer().notNull(),
-  media_type: mediaTypeEnum().notNull(),
   post_id: uuid()
     .notNull()
-    .references(() => postsTable.id, { onDelete: "cascade" }),
+    .references(() => postTable.id, { onDelete: "cascade" }),
+  order: integer().notNull(),
+  media: mediaTypeEnum().notNull(),
   created_at: timestamp().defaultNow().notNull(),
   updated_at: timestamp().defaultNow().notNull(),
 });

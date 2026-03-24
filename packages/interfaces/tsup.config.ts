@@ -12,4 +12,6 @@ export default defineConfig({
     entry: ["src/index.ts"],
     resolve: true,
   },
+
+  external: ["@repo/types"],
 });

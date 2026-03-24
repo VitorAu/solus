@@ -20,7 +20,7 @@ export function FollowRoutes(fastify: FastifyInstance, opts: FollowRoutesOpts) {
   const followCodeController = new FollowCodeController(opts.database);
 
   fastify.withTypeProvider<ZodTypeProvider>().post(
-    "/user",
+    "",
     {
       schema: {
         tags: ["Follow"],
@@ -32,7 +32,7 @@ export function FollowRoutes(fastify: FastifyInstance, opts: FollowRoutesOpts) {
           400: ErrorResponseSchema,
           500: ErrorResponseSchema,
         },
-        body: FollowSchema.pick({ user_id: true, following_id: true }),
+        body: FollowSchema.pick({ user_id: true, follows_user_id: true }),
       },
     },
     async (req, res) => {
@@ -40,7 +40,7 @@ export function FollowRoutes(fastify: FastifyInstance, opts: FollowRoutesOpts) {
         const body = req.body;
         const response = await followController.Follow(
           body.user_id,
-          body.following_id,
+          body.follows_user_id,
         );
 
         return res.code(200).send({
@@ -135,7 +135,7 @@ export function FollowRoutes(fastify: FastifyInstance, opts: FollowRoutesOpts) {
   );
 
   fastify.withTypeProvider<ZodTypeProvider>().get(
-    "/verify",
+    "/verify/:user_id/:follows_user_id",
     {
       schema: {
         tags: ["Follow"],
@@ -147,7 +147,7 @@ export function FollowRoutes(fastify: FastifyInstance, opts: FollowRoutesOpts) {
           400: ErrorResponseSchema,
           500: ErrorResponseSchema,
         },
-        params: FollowSchema.pick({ user_id: true, following_id: true }),
+        params: FollowSchema.pick({ user_id: true, follows_user_id: true }),
       },
     },
     async (req, res) => {
@@ -155,7 +155,7 @@ export function FollowRoutes(fastify: FastifyInstance, opts: FollowRoutesOpts) {
         const params = req.params;
         const response = await followController.GetIsUserFollowing(
           params.user_id,
-          params.following_id,
+          params.follows_user_id,
         );
 
         return res.code(200).send({
@@ -174,7 +174,7 @@ export function FollowRoutes(fastify: FastifyInstance, opts: FollowRoutesOpts) {
   );
 
   fastify.withTypeProvider<ZodTypeProvider>().patch(
-    "/user",
+    "",
     {
       schema: {
         tags: ["Follow"],
@@ -186,7 +186,7 @@ export function FollowRoutes(fastify: FastifyInstance, opts: FollowRoutesOpts) {
           400: ErrorResponseSchema,
           500: ErrorResponseSchema,
         },
-        body: FollowSchema.pick({ user_id: true, following_id: true }),
+        body: FollowSchema.pick({ user_id: true, follows_user_id: true }),
       },
     },
     async (req, res) => {
@@ -194,7 +194,7 @@ export function FollowRoutes(fastify: FastifyInstance, opts: FollowRoutesOpts) {
         const body = req.body;
         const response = await followController.Unfollow(
           body.user_id,
-          body.following_id,
+          body.follows_user_id,
         );
 
         return res.code(200).send({

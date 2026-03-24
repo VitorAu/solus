@@ -1,24 +1,19 @@
 import { pgTable, uuid, timestamp, boolean, unique } from "drizzle-orm/pg-core";
-import { usersTable } from "./user";
+import { userTable } from "./user";
 
-export const followsTable = pgTable(
-  "follows",
+export const followTable = pgTable(
+  "follow",
   {
     id: uuid().defaultRandom().primaryKey(),
     user_id: uuid()
       .notNull()
-      .references(() => usersTable.id, { onDelete: "cascade" }),
-    following_id: uuid()
+      .references(() => userTable.id, { onDelete: "cascade" }),
+    follows_user_id: uuid()
       .notNull()
-      .references(() => usersTable.id, { onDelete: "cascade" }),
+      .references(() => userTable.id, { onDelete: "cascade" }),
     is_following: boolean().notNull().default(true),
     created_at: timestamp().defaultNow().notNull(),
     updated_at: timestamp().defaultNow().notNull(),
   },
-  (table) => ({
-    follow_unique: unique("follow_unique").on(
-      table.user_id,
-      table.following_id,
-    ),
-  }),
+  (table) => [unique().on(table.user_id, table.follows_user_id)],
 );

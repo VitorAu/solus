@@ -1,4 +1,4 @@
-import { followsTable } from "@repo/database";
+import { followTable } from "@repo/database";
 import { IFollow } from "@repo/interfaces";
 import { FollowType } from "@repo/types";
 import { eq, and } from "drizzle-orm";
@@ -12,27 +12,27 @@ export class FollowController implements IFollow {
 
   async Follow(
     userId: FollowType["user_id"],
-    followingId: FollowType["following_id"],
+    followsUserId: FollowType["follows_user_id"],
   ): Promise<FollowType> {
-    if (userId === followingId) throw new Error("Failed to follow user");
+    if (userId === followsUserId) throw new Error("Failed to follow user");
 
     const [response] = await this.database
-      .insert(followsTable)
-      .values({ user_id: userId, following_id: followingId })
+      .insert(followTable)
+      .values({ user_id: userId, follows_user_id: followsUserId })
       .onConflictDoUpdate({
-        target: [followsTable.user_id, followsTable.following_id],
+        target: [followTable.user_id, followTable.follows_user_id],
         set: {
           is_following: true,
           updated_at: new Date(),
         },
       })
       .returning({
-        id: followsTable.id,
-        user_id: followsTable.user_id,
-        following_id: followsTable.following_id,
-        is_following: followsTable.is_following,
-        created_at: followsTable.created_at,
-        updated_at: followsTable.updated_at,
+        id: followTable.id,
+        user_id: followTable.user_id,
+        follows_user_id: followTable.follows_user_id,
+        is_following: followTable.is_following,
+        created_at: followTable.created_at,
+        updated_at: followTable.updated_at,
       });
 
     if (!response) throw new Error("Failed to follow user");
@@ -45,18 +45,18 @@ export class FollowController implements IFollow {
   ): Promise<FollowType[]> {
     const response = await this.database
       .select({
-        id: followsTable.id,
-        user_id: followsTable.user_id,
-        following_id: followsTable.following_id,
-        is_following: followsTable.is_following,
-        created_at: followsTable.created_at,
-        updated_at: followsTable.updated_at,
+        id: followTable.id,
+        user_id: followTable.user_id,
+        follows_user_id: followTable.follows_user_id,
+        is_following: followTable.is_following,
+        created_at: followTable.created_at,
+        updated_at: followTable.updated_at,
       })
-      .from(followsTable)
+      .from(followTable)
       .where(
         and(
-          eq(followsTable.user_id, userId),
-          eq(followsTable.is_following, true),
+          eq(followTable.user_id, userId),
+          eq(followTable.is_following, true),
         ),
       );
 
@@ -70,18 +70,18 @@ export class FollowController implements IFollow {
   ): Promise<FollowType[]> {
     const response = await this.database
       .select({
-        id: followsTable.id,
-        user_id: followsTable.user_id,
-        following_id: followsTable.following_id,
-        is_following: followsTable.is_following,
-        created_at: followsTable.created_at,
-        updated_at: followsTable.updated_at,
+        id: followTable.id,
+        user_id: followTable.user_id,
+        follows_user_id: followTable.follows_user_id,
+        is_following: followTable.is_following,
+        created_at: followTable.created_at,
+        updated_at: followTable.updated_at,
       })
-      .from(followsTable)
+      .from(followTable)
       .where(
         and(
-          eq(followsTable.following_id, userId),
-          eq(followsTable.is_following, true),
+          eq(followTable.follows_user_id, userId),
+          eq(followTable.is_following, true),
         ),
       );
 
@@ -92,23 +92,23 @@ export class FollowController implements IFollow {
 
   async GetIsUserFollowing(
     userId: FollowType["user_id"],
-    followingId: FollowType["following_id"],
+    followingId: FollowType["follows_user_id"],
   ): Promise<FollowType> {
     const [response] = await this.database
       .select({
-        id: followsTable.id,
-        user_id: followsTable.user_id,
-        following_id: followsTable.following_id,
-        is_following: followsTable.is_following,
-        created_at: followsTable.created_at,
-        updated_at: followsTable.updated_at,
+        id: followTable.id,
+        user_id: followTable.user_id,
+        follows_user_id: followTable.follows_user_id,
+        is_following: followTable.is_following,
+        created_at: followTable.created_at,
+        updated_at: followTable.updated_at,
       })
-      .from(followsTable)
+      .from(followTable)
       .where(
         and(
-          eq(followsTable.user_id, userId),
-          eq(followsTable.following_id, followingId),
-          eq(followsTable.is_following, true),
+          eq(followTable.user_id, userId),
+          eq(followTable.follows_user_id, followingId),
+          eq(followTable.is_following, true),
         ),
       );
 
@@ -119,27 +119,27 @@ export class FollowController implements IFollow {
 
   async Unfollow(
     userId: FollowType["user_id"],
-    followingId: FollowType["following_id"],
+    followingId: FollowType["follows_user_id"],
   ): Promise<FollowType> {
     const [response] = await this.database
-      .update(followsTable)
+      .update(followTable)
       .set({
         is_following: false,
         updated_at: new Date(),
       })
       .where(
         and(
-          eq(followsTable.user_id, userId),
-          eq(followsTable.following_id, followingId),
+          eq(followTable.user_id, userId),
+          eq(followTable.follows_user_id, followingId),
         ),
       )
       .returning({
-        id: followsTable.id,
-        user_id: followsTable.user_id,
-        following_id: followsTable.following_id,
-        is_following: followsTable.is_following,
-        created_at: followsTable.created_at,
-        updated_at: followsTable.updated_at,
+        id: followTable.id,
+        user_id: followTable.user_id,
+        follows_user_id: followTable.follows_user_id,
+        is_following: followTable.is_following,
+        created_at: followTable.created_at,
+        updated_at: followTable.updated_at,
       });
 
     if (!response) throw new Error("Failed to unfollow");
