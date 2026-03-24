@@ -1,12 +1,11 @@
 import { pgTable, uuid, integer, text, timestamp } from "drizzle-orm/pg-core";
-import { usersTable } from "./user";
+import { userTable } from "./user";
 
-export const postsTable = pgTable("posts", {
+export const postTable = pgTable("post", {
   id: uuid().defaultRandom().primaryKey(),
   user_id: uuid()
     .notNull()
-    .references(() => usersTable.id, { onDelete: "cascade" }),
-  like_count: integer().notNull().default(0),
+    .references(() => userTable.id, { onDelete: "cascade" }),
   description: text(),
   created_at: timestamp().defaultNow().notNull(),
   updated_at: timestamp().defaultNow().notNull(),

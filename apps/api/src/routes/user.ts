@@ -31,7 +31,9 @@ export async function UserRoutes(
         description: "API route to get user by id",
         security: [{ BearerAuth: [] }],
         response: {
-          200: SuccessResponseSchema(UserSchema.omit({ password: true })),
+          200: SuccessResponseSchema(
+            UserSchema.omit({ password: true, role: true }),
+          ),
           400: ErrorResponseSchema,
           500: ErrorResponseSchema,
         },
@@ -67,7 +69,9 @@ export async function UserRoutes(
         description: "API route to get user by email",
         security: [{ BearerAuth: [] }],
         response: {
-          200: SuccessResponseSchema(UserSchema.omit({ password: true })),
+          200: SuccessResponseSchema(
+            UserSchema.omit({ password: true, role: true }),
+          ),
           400: ErrorResponseSchema,
           500: ErrorResponseSchema,
         },
@@ -103,7 +107,9 @@ export async function UserRoutes(
         description: "API route to get user by name",
         security: [{ BearerAuth: [] }],
         response: {
-          200: SuccessResponseSchema(UserSchema.omit({ password: true })),
+          200: SuccessResponseSchema(
+            UserSchema.omit({ password: true, role: true }),
+          ),
           400: ErrorResponseSchema,
           500: ErrorResponseSchema,
         },
@@ -139,7 +145,9 @@ export async function UserRoutes(
         description: "API route to get user by username",
         security: [{ BearerAuth: [] }],
         response: {
-          200: SuccessResponseSchema(UserSchema.omit({ password: true })),
+          200: SuccessResponseSchema(
+            UserSchema.omit({ password: true, role: true }),
+          ),
           400: ErrorResponseSchema,
           500: ErrorResponseSchema,
         },
@@ -177,7 +185,9 @@ export async function UserRoutes(
         description: "API route to update user",
         security: [{ BearerAuth: [] }],
         response: {
-          200: SuccessResponseSchema(UserSchema.omit({ password: true })),
+          200: SuccessResponseSchema(
+            UserSchema.omit({ password: true, role: true }),
+          ),
           400: ErrorResponseSchema,
           500: ErrorResponseSchema,
         },
@@ -186,7 +196,7 @@ export async function UserRoutes(
           email: true,
           name: true,
           username: true,
-          birthdate: true,
+          birth_date: true,
           avatar_key: true,
         }).partial(),
       },
@@ -221,7 +231,9 @@ export async function UserRoutes(
         description: "Api route to update user password",
         security: [{ BearerAuth: [] }],
         response: {
-          200: SuccessResponseSchema(UserSchema.omit({ password: true })),
+          200: SuccessResponseSchema(
+            UserSchema.omit({ password: true, role: true }),
+          ),
           400: ErrorResponseSchema,
           500: ErrorResponseSchema,
         },

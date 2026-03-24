@@ -35,7 +35,7 @@ describe("User routes tests", () => {
       name: `test${uuid}`,
       username: `test${uuid}`,
       email: `test${uuid}@test${uuid}.com`,
-      birthdate: new Date("2000-01-01"),
+      birth_date: new Date("2000-01-01"),
       avatar_key: "",
       password: "test",
     };
@@ -128,7 +128,7 @@ describe("User routes tests", () => {
     assert.equal(body.data.email, user.email);
   });
 
-  test("Update user", async () => {
+  test("/api/v1/user/update-user/{id}", async () => {
     const newName = "newTest";
     const response = await server.inject({
       method: "PATCH",
@@ -147,7 +147,7 @@ describe("User routes tests", () => {
     assert.equal(body.data.name, newName);
   });
 
-  test("Update user password", async () => {
+  test("/api/v1/user/update-password/{id}", async () => {
     userController = new UserController(database);
 
     const newPassword = "newTest";
@@ -169,8 +169,7 @@ describe("User routes tests", () => {
     assert.equal(isValid, true);
   });
 
-  test("Delete user", async () => {
-    const newName = "newTest";
+  test("/api/v1/user/delete/{id}", async () => {
     const response = await server.inject({
       method: "POST",
       url: `/api/v1/user/delete/${user.id}`,

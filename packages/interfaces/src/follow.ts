@@ -1,20 +1,20 @@
 import { FollowType } from "@repo/types";
 
 export interface IFollow {
-  CreateFollow(
+  Follow(
     userId: FollowType["user_id"],
-    followingId: FollowType["following_id"],
+    followsUserId: FollowType["follows_user_id"],
   ): Promise<FollowType>;
 
   GetFollowsByUserId(userId: FollowType["user_id"]): Promise<FollowType[]>;
-  GetFollowerCountByUserId(userId: FollowType["user_id"]): Promise<number>;
-  GetIsUerFollowing(
+  GetFollowersByUserId(userId: FollowType["user_id"]): Promise<FollowType[]>;
+  GetIsUserFollowing(
     userId: FollowType["user_id"],
-    followingId: FollowType["following_id"],
-  ): Promise<boolean>;
+    followsUserId: FollowType["follows_user_id"],
+  ): Promise<FollowType>;
 
-  DeleteFollow(
+  Unfollow(
     userId: FollowType["user_id"],
-    followingId: FollowType["following_id"],
-  ): Promise<void>;
+    followsUserId: FollowType["follows_user_id"],
+  ): Promise<FollowType>;
 }

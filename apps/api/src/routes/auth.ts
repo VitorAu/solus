@@ -28,7 +28,9 @@ export async function AuthRoutes(
         summary: "Create user",
         description: "API route to create user",
         response: {
-          200: SuccessResponseSchema(UserSchema.omit({ password: true })),
+          200: SuccessResponseSchema(
+            UserSchema.omit({ password: true, role: true }),
+          ),
           400: ErrorResponseSchema,
           500: ErrorResponseSchema,
         },
@@ -37,7 +39,7 @@ export async function AuthRoutes(
           name: true,
           username: true,
           avatar_key: true,
-          birthdate: true,
+          birth_date: true,
           password: true,
         }),
       },
@@ -72,7 +74,7 @@ export async function AuthRoutes(
         response: {
           200: SuccessResponseSchema(
             z.object({
-              user: UserSchema.omit({ password: true }),
+              user: UserSchema.omit({ password: true, role: true }),
               accessToken: z.string(),
             }),
           ),

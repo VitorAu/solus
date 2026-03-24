@@ -5,10 +5,10 @@ import {
 import { Client } from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
 import {
-  usersTable,
-  postsTable,
-  followsTable,
-  followCodesTable,
+  userTable,
+  postTable,
+  followTable,
+  followCodeTable,
 } from "@repo/database";
 
 let container: StartedPostgreSqlContainer;
@@ -29,10 +29,10 @@ export async function InitTestDatabase() {
 
   const database = drizzle(client, {
     schema: {
-      usersTable,
-      postsTable,
-      followsTable,
-      followCodesTable,
+      userTable,
+      postTable,
+      followTable,
+      followCodeTable,
     },
   });
 

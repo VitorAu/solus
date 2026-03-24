@@ -1,17 +1,10 @@
+import crypto from "crypto";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { FastifyInstance } from "fastify";
-import {
-  describe,
-  test,
-  beforeAll,
-  afterAll,
-  beforeEach,
-  assert,
-} from "vitest";
+import { afterAll, assert, beforeAll, describe, test } from "vitest";
+import { CreateServer } from "../src/server";
 import { InitTestDatabase, StopTestDatabase } from "./config/database";
 import { ApplyMigrations } from "./config/migrations";
-import { CreateServer } from "../src/server";
-import crypto from "crypto";
 
 describe("Auth route tests", () => {
   let server: FastifyInstance;
@@ -30,7 +23,7 @@ describe("Auth route tests", () => {
       name: `test${uuid}`,
       username: `test${uuid}`,
       email: `test${uuid}@test${uuid}.com`,
-      birthdate: new Date("2000-01-01"),
+      birth_date: new Date("2000-01-01"),
       avatar_key: "",
       password: "test",
     };

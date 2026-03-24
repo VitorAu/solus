@@ -1,11 +1,11 @@
-import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { usersTable } from "./user";
+import { pgTable, timestamp, uuid, boolean } from "drizzle-orm/pg-core";
+import { userTable } from "./user";
 
-export const followCodesTable = pgTable("followCodes", {
-  id: text().notNull().primaryKey(),
+export const followCodeTable = pgTable("follow_code", {
+  id: uuid().defaultRandom().primaryKey(),
   user_id: uuid()
     .notNull()
-    .references(() => usersTable.id),
+    .references(() => userTable.id, { onDelete: "cascade" }),
   created_at: timestamp().defaultNow().notNull(),
   expires_at: timestamp().notNull(),
 });

@@ -5,14 +5,14 @@
   "types": "dist/index.d.ts",
   "license": "MIT",
   "type": "module",
-  "devDependencies": {
+  "dependencies": {
     "@repo/typescript": "*",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
     "tsup": "^8.5.1",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
-  },
-  "dependencies": {
-    "zod": "^4.3.6"
   },
   "scripts": {
     "dev": "tsc --watch --preserveWatchOutput",
