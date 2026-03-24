@@ -4,7 +4,7 @@ Solus is a modern monorepo built with TurboRepo that powers a scalable
 backend, shared packages, and multiple applications. The project focuses
 on performance, developer experience, and clear architecture.
 
-## Architecture
+## Project Structure
 
 This repository uses a monorepo structure so multiple apps and packages
 can share code safely and consistently.
@@ -19,6 +19,10 @@ can share code safely and consistently.
       interfaces/     Shared interfaces
       types/          Shared types and validation schemas
       typescript/     Shared TypeScript configurations
+
+## System Architecture
+
+![Solus Entity Relationship Diagram](https://github.com/VitorAu/solus/blob/53813332f28eedabbc8c8224f1ccd995cfb3bb71/solus_entity_relation.png)
 
 ## Tech Stack
 
