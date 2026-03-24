@@ -36,15 +36,17 @@ can share code safely and consistently.
 
 ## Scripts
 
-Script Description
-
----
-
-app::dev Run all apps in development
-app::build Build all packages
-app::format Format code using Prettier
-docker::compose Start local services
-docker::stop Stop containers
+| Script                   | Description                              |
+|--------------------------|------------------------------------------|
+| docker::compose          | Start Docker services                    |
+| docker::stop             | Stop Docker containers                   |
+| drizzle::generate-dev    | Generate DB schema                       |
+| drizzle::migrate-dev     | Run DB migrations                        |
+| app::dev                 | Run all apps in development              |
+| app::build               | Build all packages                       |
+| app::format-write        | Format code with Prettier (write)        |
+| app::format-check        | Check code formatting                    |
+| app::test                | Run tests across apps                    |
 
 ## Environment Variables
 
