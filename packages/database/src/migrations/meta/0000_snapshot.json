@@ -1,5 +1,5 @@
 {
-  "id": "ea1ec3cd-b263-40d3-9368-5ce2b0effc43",
+  "id": "8f0b490c-528f-486f-9478-72c0993dda76",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -565,7 +565,7 @@
           "name": "post_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "like_count": {
           "name": "like_count",
@@ -642,8 +642,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "liked": {
-          "name": "liked",
+        "is_liked": {
+          "name": "is_liked",
           "type": "boolean",
           "primaryKey": false,
           "notNull": true,
@@ -750,6 +750,12 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},

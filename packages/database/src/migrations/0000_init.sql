@@ -68,7 +68,7 @@ CREATE TABLE "post" (
 --> statement-breakpoint
 CREATE TABLE "post_analytic" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"post_id" uuid,
+	"post_id" uuid NOT NULL,
 	"like_count" integer DEFAULT 0 NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
@@ -79,7 +79,7 @@ CREATE TABLE "post_like" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"post_id" uuid NOT NULL,
 	"user_id" uuid NOT NULL,
-	"liked" boolean DEFAULT true NOT NULL,
+	"is_liked" boolean DEFAULT true NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "post_like_user_unique" UNIQUE("post_id","user_id")
@@ -91,7 +91,8 @@ CREATE TABLE "post_media" (
 	"order" integer NOT NULL,
 	"media" "media" NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"deleted_at" timestamp
 );
 --> statement-breakpoint
 CREATE TABLE "user" (

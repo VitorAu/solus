@@ -19,4 +19,5 @@ export const postMediaTable = pgTable("post_media", {
   media: mediaTypeEnum().notNull(),
   created_at: timestamp().defaultNow().notNull(),
   updated_at: timestamp().defaultNow().notNull(),
+  deleted_at: timestamp(),
 });

@@ -7,6 +7,7 @@ export const PostMediaSchema = z.object({
   media: z.enum(["IMAGE", "VIDEO"]),
   created_at: z.date(),
   updated_at: z.date(),
+  deleted_at: z.date().nullable(),
 });
 
 export type PostMediaType = z.infer<typeof PostMediaSchema>;

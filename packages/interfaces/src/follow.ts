@@ -8,7 +8,7 @@ export interface IFollow {
 
   GetFollowsByUserId(userId: FollowType["user_id"]): Promise<FollowType[]>;
   GetFollowersByUserId(userId: FollowType["user_id"]): Promise<FollowType[]>;
-  GetIsUserFollowing(
+  GetUserFollowRelationship(
     userId: FollowType["user_id"],
     followsUserId: FollowType["follows_user_id"],
   ): Promise<FollowType>;
