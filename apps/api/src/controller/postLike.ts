@@ -4,7 +4,7 @@ import { PostLikeType } from "@repo/types";
 import { eq, and } from "drizzle-orm";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
 
-export class PostLike implements IPostLike {
+export class PostLikeController implements IPostLike {
   private readonly database: NodePgDatabase<any>;
   constructor(database: NodePgDatabase<any>) {
     this.database = database;

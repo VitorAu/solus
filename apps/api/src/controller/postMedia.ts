@@ -1,15 +1,16 @@
 import { postMediaTable } from "@repo/database";
 import { IPostMedia } from "@repo/interfaces";
 import { PostMediaType } from "@repo/types";
+import { and, eq, isNull } from "drizzle-orm";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
-import { eq, and } from "drizzle-orm";
 
-export class PostMedia implements IPostMedia {
+export class PostMediaController implements IPostMedia {
   private readonly database: NodePgDatabase<any>;
   constructor(database: NodePgDatabase<any>) {
     this.database = database;
   }
 
+  // transform this into a transaction so it will also update the updated_at at the postTable
   async CreatePostMedia(
     postId: PostMediaType["post_id"],
     data: Array<Pick<PostMediaType, "id" | "media">>,
@@ -53,24 +54,41 @@ export class PostMedia implements IPostMedia {
         deleted_at: postMediaTable.deleted_at,
       })
       .from(postMediaTable)
-      .where(eq(postMediaTable.post_id, postId));
+      .where(
+        and(
+          eq(postMediaTable.post_id, postId),
+          isNull(postMediaTable.deleted_at),
+        ),
+      );
 
     if (!response) throw new Error("Failed to get post media");
 
     return response;
   }
 
-  // finish adding a add media, and complete the delete, and a delete all post media
-  // in the db we will do a soft delete, but in aws we will do a hard delete
-
-  async DeletePostMedia(
-    postId: PostMediaType["post_id"],
-    id: PostMediaType["id"],
-  ): Promise<void> {
-    const [response] = await this.database
+  async DeleteAllPostMedia(postId: PostMediaType["post_id"]): Promise<void> {
+    const response = await this.database
       .update(postMediaTable)
-      .set({})
-      .where(and(postId))
-      .returning();
+      .set({
+        updated_at: new Date(),
+        deleted_at: new Date(),
+      })
+      .where(
+        and(
+          eq(postMediaTable.post_id, postId),
+          isNull(postMediaTable.deleted_at),
+        ),
+      )
+      .returning({
+        id: postMediaTable.id,
+        post_id: postMediaTable.post_id,
+        order: postMediaTable.order,
+        media: postMediaTable.media,
+        created_at: postMediaTable.created_at,
+        updated_at: postMediaTable.updated_at,
+        deleted_at: postMediaTable.deleted_at,
+      });
+
+    if (!response) throw new Error("Failed to delete pose media");
   }
 }

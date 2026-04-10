@@ -4,7 +4,7 @@ import { PostType } from "@repo/types";
 import { eq, isNull, and } from "drizzle-orm";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
 
-export class Post implements IPost {
+export class PostController implements IPost {
   private readonly database: NodePgDatabase<any>;
   constructor(database: NodePgDatabase<any>) {
     this.database = database;
@@ -49,8 +49,8 @@ export class Post implements IPost {
     return response;
   }
 
-  async GetPostByUserId(userId: PostType["user_id"]): Promise<PostType> {
-    const [response] = await this.database
+  async GetPostByUserId(userId: PostType["user_id"]): Promise<PostType[]> {
+    const response = await this.database
       .select({
         id: postTable.id,
         user_id: postTable.user_id,

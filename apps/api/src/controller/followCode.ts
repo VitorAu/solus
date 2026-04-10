@@ -1,7 +1,7 @@
 import { followCodeTable } from "@repo/database";
 import { IFollowCode } from "@repo/interfaces";
 import { FollowCodeType } from "@repo/types";
-import { eq, and, gt } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
 
 export class FollowCodeController implements IFollowCode {
@@ -48,7 +48,7 @@ export class FollowCodeController implements IFollowCode {
         and(eq(followCodeTable.id, id), eq(followCodeTable.user_id, user_id)),
       );
 
-    if (!response) throw new Error("Failed to create follow code");
+    if (!response) throw new Error("Failed to verify follow code");
     if (response.expires_at < new Date()) return false;
     return true;
   }

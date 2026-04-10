@@ -8,8 +8,5 @@ export interface IPostMedia {
 
   GetPostMedia(postId: PostMediaType["post_id"]): Promise<PostMediaType[]>;
 
-  DeletePostMedia(
-    postId: PostMediaType["post_id"],
-    id: PostMediaType["id"],
-  ): Promise<void>;
+  DeleteAllPostMedia(postId: PostMediaType["post_id"]): Promise<void>;
 }

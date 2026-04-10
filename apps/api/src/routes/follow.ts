@@ -1,5 +1,6 @@
 import { FollowController } from "@/controller/follow";
 import { FollowCodeController } from "@/controller/followCode";
+import { Auth } from "@/hooks/auth";
 import {
   ErrorResponseSchema,
   FollowCodeSchema,
@@ -22,6 +23,7 @@ export function FollowRoutes(fastify: FastifyInstance, opts: FollowRoutesOpts) {
   fastify.withTypeProvider<ZodTypeProvider>().post(
     "",
     {
+      preHandler: [Auth],
       schema: {
         tags: ["Follow"],
         summary: "Follow user",
@@ -32,14 +34,15 @@ export function FollowRoutes(fastify: FastifyInstance, opts: FollowRoutesOpts) {
           400: ErrorResponseSchema,
           500: ErrorResponseSchema,
         },
-        body: FollowSchema.pick({ user_id: true, follows_user_id: true }),
+        body: FollowSchema.pick({ follows_user_id: true }),
       },
     },
     async (req, res) => {
       try {
         const body = req.body;
+        const userId = (req.user as any).sub;
         const response = await followController.Follow(
-          body.user_id,
+          userId,
           body.follows_user_id,
         );
 
@@ -153,7 +156,7 @@ export function FollowRoutes(fastify: FastifyInstance, opts: FollowRoutesOpts) {
     async (req, res) => {
       try {
         const params = req.params;
-        const response = await followController.GetIsUserFollowing(
+        const response = await followController.GetUserFollowRelationship(
           params.user_id,
           params.follows_user_id,
         );
@@ -176,6 +179,7 @@ export function FollowRoutes(fastify: FastifyInstance, opts: FollowRoutesOpts) {
   fastify.withTypeProvider<ZodTypeProvider>().patch(
     "",
     {
+      preHandler: [Auth],
       schema: {
         tags: ["Follow"],
         summary: "Unfollow user",
@@ -186,14 +190,15 @@ export function FollowRoutes(fastify: FastifyInstance, opts: FollowRoutesOpts) {
           400: ErrorResponseSchema,
           500: ErrorResponseSchema,
         },
-        body: FollowSchema.pick({ user_id: true, follows_user_id: true }),
+        body: FollowSchema.pick({ follows_user_id: true }),
       },
     },
     async (req, res) => {
       try {
         const body = req.body;
+        const userId = (req.user as any).sub;
         const response = await followController.Unfollow(
-          body.user_id,
+          userId,
           body.follows_user_id,
         );
 
@@ -215,6 +220,7 @@ export function FollowRoutes(fastify: FastifyInstance, opts: FollowRoutesOpts) {
   fastify.withTypeProvider<ZodTypeProvider>().post(
     "/code",
     {
+      preHandler: [Auth],
       schema: {
         tags: ["Follow"],
         summary: "Create follow code",
@@ -225,15 +231,13 @@ export function FollowRoutes(fastify: FastifyInstance, opts: FollowRoutesOpts) {
           400: ErrorResponseSchema,
           500: ErrorResponseSchema,
         },
-        body: FollowCodeSchema.pick({ user_id: true }),
       },
     },
     async (req, res) => {
       try {
         const body = req.body;
-        const response = await followCodeController.CreateFollowCode(
-          body.user_id,
-        );
+        const userId = (req.user as any).sub;
+        const response = await followCodeController.CreateFollowCode(userId);
 
         return res.code(200).send({
           status: "success",

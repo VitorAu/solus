@@ -7,7 +7,7 @@ export interface IPost {
   ): Promise<PostType>;
 
   GetPostById(id: PostType["id"]): Promise<PostType>;
-  GetPostByUserId(userId: PostType["user_id"]): Promise<PostType>;
+  GetPostByUserId(userId: PostType["user_id"]): Promise<PostType[]>;
 
   UpdatePost(
     id: PostType["id"],

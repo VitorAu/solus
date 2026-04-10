@@ -4,7 +4,7 @@ import { PostAnalyticType } from "@repo/types";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { eq } from "drizzle-orm";
 
-export class PostAnalytics implements IPostAnalytic {
+export class PostAnalyticsController implements IPostAnalytic {
   private readonly database: NodePgDatabase<any>;
   constructor(database: NodePgDatabase<any>) {
     this.database = database;
