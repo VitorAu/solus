@@ -128,11 +128,11 @@ describe("User routes tests", () => {
     assert.equal(body.data.email, user.email);
   });
 
-  test("/api/v1/user/update-user/{id}", async () => {
+  test("/api/v1/user/update-user", async () => {
     const newName = "newTest";
     const response = await server.inject({
       method: "PATCH",
-      url: `/api/v1/user/update-user/${user.id}`,
+      url: `/api/v1/user/update-user`,
       headers: {
         authorization: `Bearer ${accessToken}`,
       },
@@ -147,13 +147,13 @@ describe("User routes tests", () => {
     assert.equal(body.data.name, newName);
   });
 
-  test("/api/v1/user/update-password/{id}", async () => {
+  test("/api/v1/user/update-password", async () => {
     userController = new UserController(database);
 
     const newPassword = "newTest";
     const response = await server.inject({
       method: "PUT",
-      url: `/api/v1/user/update-password/${user.id}`,
+      url: `/api/v1/user/update-password`,
       headers: {
         authorization: `Bearer ${accessToken}`,
       },
@@ -169,10 +169,10 @@ describe("User routes tests", () => {
     assert.equal(isValid, true);
   });
 
-  test("/api/v1/user/delete/{id}", async () => {
+  test("/api/v1/user/delete", async () => {
     const response = await server.inject({
       method: "POST",
-      url: `/api/v1/user/delete/${user.id}`,
+      url: `/api/v1/user/delete`,
       headers: {
         authorization: `Bearer ${accessToken}`,
       },

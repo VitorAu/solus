@@ -235,7 +235,6 @@ export function FollowRoutes(fastify: FastifyInstance, opts: FollowRoutesOpts) {
     },
     async (req, res) => {
       try {
-        const body = req.body;
         const userId = (req.user as any).sub;
         const response = await followCodeController.CreateFollowCode(userId);
 

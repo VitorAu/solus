@@ -92,7 +92,6 @@ describe("Analytics routes tests", () => {
         authorization: `Bearer ${accessToken}`,
       },
       payload: {
-        user_id: user.id,
         follows_user_id: secondUser.id,
       },
     });
@@ -100,7 +99,6 @@ describe("Analytics routes tests", () => {
     assert.equal(response.statusCode, 200);
 
     const body = JSON.parse(response.body);
-    assert.equal(body.data.user_id, user.id);
     assert.equal(body.data.follows_user_id, secondUser.id);
   });
 
@@ -112,7 +110,6 @@ describe("Analytics routes tests", () => {
         authorization: `Bearer ${accessToken}`,
       },
       payload: {
-        user_id: user.id,
         follows_user_id: secondUser.id,
       },
     });
@@ -120,7 +117,6 @@ describe("Analytics routes tests", () => {
     assert.equal(followResponse.statusCode, 200);
 
     const followBody = JSON.parse(followResponse.body);
-    assert.equal(followBody.data.user_id, user.id);
     assert.equal(followBody.data.follows_user_id, secondUser.id);
 
     const response = await server.inject({
@@ -130,7 +126,6 @@ describe("Analytics routes tests", () => {
         authorization: `Bearer ${accessToken}`,
       },
       payload: {
-        user_id: user.id,
         follows_user_id: secondUser.id,
       },
     });
@@ -138,7 +133,6 @@ describe("Analytics routes tests", () => {
     assert.equal(response.statusCode, 200);
 
     const body = JSON.parse(response.body);
-    assert.equal(body.data.user_id, user.id);
     assert.equal(body.data.follows_user_id, secondUser.id);
   });
 
@@ -150,7 +144,6 @@ describe("Analytics routes tests", () => {
         authorization: `Bearer ${accessToken}`,
       },
       payload: {
-        user_id: user.id,
         follows_user_id: secondUser.id,
       },
     });
@@ -158,7 +151,6 @@ describe("Analytics routes tests", () => {
     assert.equal(followResponse.statusCode, 200);
 
     const followBody = JSON.parse(followResponse.body);
-    assert.equal(followBody.data.user_id, user.id);
     assert.equal(followBody.data.follows_user_id, secondUser.id);
 
     const response = await server.inject({
@@ -183,7 +175,6 @@ describe("Analytics routes tests", () => {
         authorization: `Bearer ${accessToken}`,
       },
       payload: {
-        user_id: user.id,
         follows_user_id: secondUser.id,
       },
     });
@@ -191,7 +182,6 @@ describe("Analytics routes tests", () => {
     assert.equal(followResponse.statusCode, 200);
 
     const followBody = JSON.parse(followResponse.body);
-    assert.equal(followBody.data.user_id, user.id);
     assert.equal(followBody.data.follows_user_id, secondUser.id);
 
     const response = await server.inject({
@@ -250,15 +240,9 @@ describe("Analytics routes tests", () => {
       headers: {
         authorization: `Bearer ${accessToken}`,
       },
-      payload: {
-        user_id: user.id,
-      },
     });
 
     assert.equal(response.statusCode, 200);
-
-    const body = JSON.parse(response.body);
-    assert.equal(body.data.user_id, user.id);
   });
 
   test("/api/v1/follow/verify/code", async () => {
