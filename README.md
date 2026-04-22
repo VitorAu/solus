@@ -11,8 +11,7 @@ can share code safely and consistently.
 
     apps/
       api/        Backend API
-      web/        Web client
-      mobile/     Mobile client
+      web/        Web client (not implemented yet)
 
     packages/
       database/       Database schema and migrations
