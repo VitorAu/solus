@@ -56,6 +56,11 @@ describe("Post route tests", () => {
     });
     assert.equal(loginResponse.statusCode, 200);
 
+    const registerBody = JSON.parse(registerResponse.body);
+    const loginBody = JSON.parse(loginResponse.body);
+    user = registerBody.data;
+    accessToken = loginBody.data.accessToken;
+
     const postResponse = await server.inject({
       method: "POST",
       url: "/api/v1/post",
@@ -69,11 +74,7 @@ describe("Post route tests", () => {
 
     assert.equal(postResponse.statusCode, 200);
 
-    const registerBody = JSON.parse(registerResponse.body);
-    const loginBody = JSON.parse(loginResponse.body);
     const postBody = JSON.parse(postResponse.body);
-    user = registerBody.data;
-    accessToken = loginBody.data.accessToken;
     post = postBody.data;
   });
 
@@ -127,7 +128,7 @@ describe("Post route tests", () => {
   test("/api/v1/post/update/post-id/{id}", async () => {
     const response = await server.inject({
       method: "PATCH",
-      url: `api/v1/post/update/post-id/${post.id}`,
+      url: `/api/v1/post/update/post-id/${post.id}`,
       headers: {
         authorization: `Bearer ${accessToken}`,
       },
@@ -145,7 +146,7 @@ describe("Post route tests", () => {
   test("/api/v1/post/delete/post-id/{id}", async () => {
     const response = await server.inject({
       method: "POST",
-      url: `api/v1/post/like/post-id/${post.id}`,
+      url: `/api/v1/post/like/post-id/${post.id}`,
       headers: {
         authorization: `Bearer ${accessToken}`,
       },
@@ -157,7 +158,7 @@ describe("Post route tests", () => {
   test("/api/v1/post/like/post-id/{post_id}", async () => {
     const response = await server.inject({
       method: "POST",
-      url: `api/v1/post/like/post-id/${post.id}`,
+      url: `/api/v1/post/like/post-id/${post.id}`,
       headers: {
         authorization: `Bearer ${accessToken}`,
       },
@@ -169,7 +170,7 @@ describe("Post route tests", () => {
   test("/api/v1/post/likes/post-id/{post_id}", async () => {
     const response = await server.inject({
       method: "GET",
-      url: `api/v1/post/likes/post-id/${post.id}`,
+      url: `/api/v1/post/likes/post-id/${post.id}`,
       headers: {
         authorization: `Bearer ${accessToken}`,
       },
@@ -181,7 +182,7 @@ describe("Post route tests", () => {
   test("/api/v1/post/like-relationship/user-id/{user_id}/post-id/{post_id}", async () => {
     const likeResponse = await server.inject({
       method: "POST",
-      url: `api/v1/post/like/post-id/${post.id}`,
+      url: `/api/v1/post/like/post-id/${post.id}`,
       headers: {
         authorization: `Bearer ${accessToken}`,
       },
@@ -191,7 +192,7 @@ describe("Post route tests", () => {
 
     const response = await server.inject({
       method: "GET",
-      url: `api/v1/post/like-relationship/user-id/${user.id}/post-id/${post.id}`,
+      url: `/api/v1/post/like-relationship/user-id/${user.id}/post-id/${post.id}`,
       headers: {
         authorization: `Bearer ${accessToken}`,
       },
@@ -201,9 +202,20 @@ describe("Post route tests", () => {
   });
 
   test("/api/v1/post/unlike/post-id/{post_id}", async () => {
+    const likeResponse = await server.inject({
+      method: "POST",
+      url: `/api/v1/post/like/post-id/${post.id}`,
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    assert.equal(likeResponse.statusCode, 200);
+
+
     const response = await server.inject({
       method: "POST",
-      url: `api/v1/post/unlike/post-id/${post.id}`,
+      url: `/api/v1/post/unlike/post-id/${post.id}`,
       headers: {
         authorization: `Bearer ${accessToken}`,
       },

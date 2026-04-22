@@ -3,6 +3,7 @@ import { IPost } from "@repo/interfaces";
 import { PostType } from "@repo/types";
 import { eq, isNull, and } from "drizzle-orm";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
+import { PostAnalyticsController } from "./postAnalytics";
 
 export class PostController implements IPost {
   private readonly database: NodePgDatabase<any>;
@@ -14,19 +15,26 @@ export class PostController implements IPost {
     userId: PostType["user_id"],
     data: PostType["description"],
   ): Promise<PostType> {
-    const [response] = await this.database
-      .insert(postTable)
-      .values({ user_id: userId, description: data })
-      .returning({
-        id: postTable.id,
-        user_id: postTable.user_id,
-        description: postTable.description,
-        created_at: postTable.created_at,
-        updated_at: postTable.updated_at,
-        deleted_at: postTable.deleted_at,
-      });
+    const response = await this.database.transaction(async (tx) => {
+      const [post] = await this.database
+        .insert(postTable)
+        .values({ user_id: userId, description: data })
+        .returning({
+          id: postTable.id,
+          user_id: postTable.user_id,
+          description: postTable.description,
+          created_at: postTable.created_at,
+          updated_at: postTable.updated_at,
+          deleted_at: postTable.deleted_at,
+        });
 
-    if (!response) throw new Error("Failed to create post");
+      if (!post) throw new Error("Failed to create post");
+
+      const postAnalyticController = new PostAnalyticsController(tx);
+      postAnalyticController.CreatePostAnalytic(post.id);
+
+      return post;
+    });
 
     return response;
   }

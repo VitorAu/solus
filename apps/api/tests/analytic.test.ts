@@ -80,4 +80,32 @@ describe("Follow routes tests", () => {
     const body = JSON.parse(response.body);
     assert.equal(body.data.user_id, user.id);
   });
+
+  test("/api/v1/analytics/post/{post_id}", async () => {
+    const postResponse = await server.inject({
+      method: "POST",
+      url: "/api/v1/post",
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+      payload: {
+        description: "test",
+      },
+    });
+
+    assert.equal(postResponse.statusCode, 200);
+
+    const postBody = JSON.parse(postResponse.body);
+    const post = postBody.data;
+
+    const response = await server.inject({
+      method: "GET",
+      url: `/api/v1/analytics/post/${post.id}`,
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    assert.equal(response.statusCode, 200);
+  });
 });
