@@ -20,6 +20,7 @@ export async function UserRoutes(
   opts: UserRoutesOpts,
 ) {
   const userController = new UserController(opts.database);
+
   fastify.addHook("preHandler", Auth);
 
   fastify.withTypeProvider<ZodTypeProvider>().get(
@@ -177,8 +178,9 @@ export async function UserRoutes(
   );
 
   fastify.withTypeProvider<ZodTypeProvider>().patch(
-    "/update-user/:id",
+    "/update-user",
     {
+      preHandler: [Auth],
       schema: {
         tags: ["User"],
         summary: "Update user",
@@ -191,7 +193,6 @@ export async function UserRoutes(
           400: ErrorResponseSchema,
           500: ErrorResponseSchema,
         },
-        params: UserSchema.pick({ id: true }),
         body: UserSchema.pick({
           email: true,
           name: true,
@@ -204,8 +205,8 @@ export async function UserRoutes(
     async (req, res) => {
       try {
         const body = req.body;
-        const params = req.params;
-        const response = await userController.UpdateUser(params.id, body);
+        const userId = (req.user as any).sub;
+        const response = await userController.UpdateUser(userId, body);
 
         return res.code(200).send({
           status: "success",
@@ -223,8 +224,9 @@ export async function UserRoutes(
   );
 
   fastify.withTypeProvider<ZodTypeProvider>().put(
-    "/update-password/:id",
+    "/update-password",
     {
+      preHandler: [Auth],
       schema: {
         tags: ["User"],
         summary: "Update user password",
@@ -237,7 +239,6 @@ export async function UserRoutes(
           400: ErrorResponseSchema,
           500: ErrorResponseSchema,
         },
-        params: UserSchema.pick({ id: true }),
         body: UserSchema.pick({
           password: true,
         }).extend({ newPassword: z.string() }),
@@ -246,10 +247,10 @@ export async function UserRoutes(
     async (req, res) => {
       try {
         const body = req.body;
-        const params = req.params;
+        const userId = (req.user as any).sub;
 
         const response = await userController.UpdateUserPassword(
-          params.id,
+          userId,
           body.password,
           body.newPassword,
         );
@@ -270,8 +271,9 @@ export async function UserRoutes(
   );
 
   fastify.withTypeProvider<ZodTypeProvider>().post(
-    "/delete/:id",
+    "/delete",
     {
+      preHandler: [Auth],
       schema: {
         tags: ["User"],
         summary: "Delete user",
@@ -282,13 +284,12 @@ export async function UserRoutes(
           400: ErrorResponseSchema,
           500: ErrorResponseSchema,
         },
-        params: UserSchema.pick({ id: true }),
       },
     },
     async (req, res) => {
       try {
-        const params = req.params;
-        const response = await userController.DeleteUser(params.id);
+        const userId = (req.user as any).sub;
+        await userController.DeleteUser(userId);
 
         return res.code(200).send({
           status: "success",

@@ -7,12 +7,13 @@ export interface IPost {
   ): Promise<PostType>;
 
   GetPostById(id: PostType["id"]): Promise<PostType>;
-  GetPostByUserId(userId: PostType["user_id"]): Promise<PostType>;
+  GetPostByUserId(userId: PostType["user_id"]): Promise<PostType[]>;
 
   UpdatePost(
     id: PostType["id"],
+    userId: PostType["user_id"],
     data: PostType["description"],
   ): Promise<PostType>;
 
-  DeletePost(id: PostType["id"]): Promise<void>;
+  DeletePost(id: PostType["id"], userId: PostType["user_id"]): Promise<void>;
 }

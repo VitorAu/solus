@@ -1,6 +1,6 @@
 import { PostAnalyticType } from "@repo/types";
 
-export interface IPostAnalytics {
+export interface IPostAnalytic {
   CreatePostAnalytic(
     userId: PostAnalyticType["post_id"],
   ): Promise<PostAnalyticType>;

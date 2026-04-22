@@ -7,11 +7,8 @@ export default defineConfig({
   outDir: "dist",
   clean: true,
   sourcemap: true,
-  bundle: true,
-  dts: {
-    entry: ["src/index.ts"],
-    resolve: true,
-  },
+  bundle: false,
+  dts: true,
 
   external: ["@repo/types"],
 });

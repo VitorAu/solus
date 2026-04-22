@@ -2,7 +2,6 @@ import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { CreateServer } from "../src/server";
 import { InitTestDatabase, StopTestDatabase } from "./config/database";
 import { ApplyMigrations } from "./config/migrations";
-import { UserController } from "../src/controller/user";
 import {
   describe,
   beforeEach,
@@ -14,11 +13,11 @@ import {
 import { FastifyInstance } from "fastify/types/instance";
 import crypto from "crypto";
 
-describe("User routes tests", () => {
+describe("Post route tests", () => {
   let server: FastifyInstance;
   let database: NodePgDatabase<any>;
-  let userController;
   let user: any;
+  let post: any;
   let accessToken: any;
 
   beforeAll(async () => {
@@ -61,6 +60,22 @@ describe("User routes tests", () => {
     const loginBody = JSON.parse(loginResponse.body);
     user = registerBody.data;
     accessToken = loginBody.data.accessToken;
+
+    const postResponse = await server.inject({
+      method: "POST",
+      url: "/api/v1/post",
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+      payload: {
+        description: "test",
+      },
+    });
+
+    assert.equal(postResponse.statusCode, 200);
+
+    const postBody = JSON.parse(postResponse.body);
+    post = postBody.data;
   });
 
   afterAll(async () => {
@@ -68,111 +83,139 @@ describe("User routes tests", () => {
     await StopTestDatabase();
   });
 
-  test("/api/v1/user/id/:id", async () => {
-    const response = await server.inject({
-      method: "GET",
-      url: `/api/v1/user/id/${user.id}`,
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    assert.equal(response.statusCode, 200);
-
-    const body = JSON.parse(response.body);
-    assert.equal(body.data.id, user.id);
-  });
-
-  test("/api/v1/user/name/:name", async () => {
-    const response = await server.inject({
-      method: "GET",
-      url: `/api/v1/user/name/${user.name}`,
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    assert.equal(response.statusCode, 200);
-
-    const body = JSON.parse(response.body);
-    assert.equal(body.data.name, user.name);
-  });
-
-  test("/api/v1/user/username/:username", async () => {
-    const response = await server.inject({
-      method: "GET",
-      url: `/api/v1/user/username/${user.username}`,
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    assert.equal(response.statusCode, 200);
-
-    const body = JSON.parse(response.body);
-    assert.equal(body.data.username, user.username);
-  });
-
-  test("/api/v1/user/email/:email", async () => {
-    const response = await server.inject({
-      method: "GET",
-      url: `/api/v1/user/email/${user.email}`,
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    assert.equal(response.statusCode, 200);
-
-    const body = JSON.parse(response.body);
-    assert.equal(body.data.email, user.email);
-  });
-
-  test("/api/v1/user/update-user", async () => {
-    const newName = "newTest";
-    const response = await server.inject({
-      method: "PATCH",
-      url: `/api/v1/user/update-user`,
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-      },
-      payload: {
-        name: newName,
-      },
-    });
-
-    assert.equal(response.statusCode, 200);
-
-    const body = JSON.parse(response.body);
-    assert.equal(body.data.name, newName);
-  });
-
-  test("/api/v1/user/update-password", async () => {
-    userController = new UserController(database);
-
-    const newPassword = "newTest";
-    const response = await server.inject({
-      method: "PUT",
-      url: `/api/v1/user/update-password`,
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-      },
-      payload: {
-        password: "test",
-        newPassword: newPassword,
-      },
-    });
-
-    assert.equal(response.statusCode, 200);
-
-    const isValid = await userController.VerifyPassword(user.id, newPassword);
-    assert.equal(isValid, true);
-  });
-
-  test("/api/v1/user/delete", async () => {
+  test("/api/v1/post", async () => {
     const response = await server.inject({
       method: "POST",
-      url: `/api/v1/user/delete`,
+      url: "/api/v1/post",
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+      payload: {
+        description: "test",
+      },
+    });
+
+    assert.equal(response.statusCode, 200);
+
+    const body = JSON.parse(response.body);
+    assert.equal(body.data.description, "test");
+  });
+
+  test("/api/v1/post/post-id/{id}", async () => {
+    const response = await server.inject({
+      method: "GET",
+      url: `/api/v1/post/post-id/${post.id}`,
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    assert.equal(response.statusCode, 200);
+  });
+
+  test("/api/v1/post/user-id/{user_id}", async () => {
+    const response = await server.inject({
+      method: "GET",
+      url: `/api/v1/post/user-id/${user.id}`,
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    assert.equal(response.statusCode, 200);
+  });
+
+  test("/api/v1/post/update/post-id/{id}", async () => {
+    const response = await server.inject({
+      method: "PATCH",
+      url: `/api/v1/post/update/post-id/${post.id}`,
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+      payload: {
+        description: "test2",
+      },
+    });
+
+    assert.equal(response.statusCode, 200);
+
+    const body = JSON.parse(response.body);
+    assert.equal(body.data.description, "test2");
+  });
+
+  test("/api/v1/post/delete/post-id/{id}", async () => {
+    const response = await server.inject({
+      method: "POST",
+      url: `/api/v1/post/like/post-id/${post.id}`,
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    assert.equal(response.statusCode, 200);
+  });
+
+  test("/api/v1/post/like/post-id/{post_id}", async () => {
+    const response = await server.inject({
+      method: "POST",
+      url: `/api/v1/post/like/post-id/${post.id}`,
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    assert.equal(response.statusCode, 200);
+  });
+
+  test("/api/v1/post/likes/post-id/{post_id}", async () => {
+    const response = await server.inject({
+      method: "GET",
+      url: `/api/v1/post/likes/post-id/${post.id}`,
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    assert.equal(response.statusCode, 200);
+  });
+
+  test("/api/v1/post/like-relationship/user-id/{user_id}/post-id/{post_id}", async () => {
+    const likeResponse = await server.inject({
+      method: "POST",
+      url: `/api/v1/post/like/post-id/${post.id}`,
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    assert.equal(likeResponse.statusCode, 200);
+
+    const response = await server.inject({
+      method: "GET",
+      url: `/api/v1/post/like-relationship/user-id/${user.id}/post-id/${post.id}`,
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    assert.equal(response.statusCode, 200);
+  });
+
+  test("/api/v1/post/unlike/post-id/{post_id}", async () => {
+    const likeResponse = await server.inject({
+      method: "POST",
+      url: `/api/v1/post/like/post-id/${post.id}`,
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    assert.equal(likeResponse.statusCode, 200);
+
+
+    const response = await server.inject({
+      method: "POST",
+      url: `/api/v1/post/unlike/post-id/${post.id}`,
       headers: {
         authorization: `Bearer ${accessToken}`,
       },

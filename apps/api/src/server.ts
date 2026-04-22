@@ -8,6 +8,7 @@ import { AuthRoutes } from "@/routes/auth";
 import { HealthRoutes } from "@/routes/health";
 import { MediaRoutes } from "@/routes/media";
 import { UserRoutes } from "@/routes/user";
+import { PostRoutes } from "@/routes/post";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { fastify } from "fastify";
 import {
@@ -59,6 +60,7 @@ export function CreateServer(database: NodePgDatabase<any>) {
     prefix: "/api/v1/follow",
     database: database,
   });
+  server.register(PostRoutes, { prefix: "/api/v1/post", database: database });
 
   return server;
 }

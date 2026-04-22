@@ -1,33 +1,53 @@
-import { CreateAwsClient } from "@/config/aws";
-import { environment } from "@/config/environment";
-import { PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
 import { MultipartFile } from "@fastify/multipart";
-import { ErrorResponseSchema, SuccessResponseSchema } from "@repo/types";
-import { randomUUID } from "crypto";
+import {
+  ErrorResponseSchema,
+  PostMediaSchema,
+  PostMediaType,
+  SuccessResponseNoDataSchema,
+  SuccessResponseSchema,
+} from "@repo/types";
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { fileTypeFromBuffer } from "file-type";
 import sharp from "sharp";
 import { z } from "zod";
+import {
+  GetObjectCommandInput,
+  PutObjectCommand,
+  PutObjectCommandInput,
+  GetObjectCommand,
+  DeleteObjectCommand,
+} from "@aws-sdk/client-s3";
+import { environment } from "@/config/environment";
+import { randomUUID } from "crypto";
+import { CreateAwsClient } from "@/config/aws";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { PostMediaController } from "@/controller/postMedia";
+import { NodePgDatabase } from "drizzle-orm/node-postgres";
 
-export function MediaRoutes(fastify: FastifyInstance) {
+type MediaRoutesOpts = {
+  database: NodePgDatabase<any>;
+};
+
+export function MediaRoutes(fastify: FastifyInstance, opts: MediaRoutesOpts) {
+  const postMediaController = new PostMediaController(opts.database);
+
+  // TODO: Review this workflow later, currently the user creates a post, and then using the postId it can send images, but it will be better if the user can upload temporary images and then link them with the post
   fastify.withTypeProvider<ZodTypeProvider>().post(
-    "/upload",
+    "/media/upload/post-id/:post_id",
     {
       schema: {
         tags: ["Media"],
-        summary: "Upload images to s3",
-        description: "Api route to upload image files to s3",
+        summary: "Upload image files to S3",
+        description: "api route to upload image files",
+        security: [{ BearerAuth: [] }],
         response: {
-          200: SuccessResponseSchema(
-            z
-              .object({ index: z.number(), key: z.string(), url: z.string() })
-              .array(),
-          ),
+          200: SuccessResponseSchema(PostMediaSchema.array()),
           400: ErrorResponseSchema,
           500: ErrorResponseSchema,
         },
         consumes: ["multipart/form-data"],
+        params: PostMediaSchema.pick({ post_id: true }),
         body: z.object({
           files: z
             .custom<MultipartFile>()
@@ -41,10 +61,14 @@ export function MediaRoutes(fastify: FastifyInstance) {
     },
     async (req, res) => {
       try {
-        const files = req.body.files;
+        const files = Array.isArray(req.body.files)
+          ? req.body.files
+          : [req.body.files];
+        const params = req.params;
+
         const aws = CreateAwsClient();
 
-        if (!files) {
+        if (!files || files.length === 0) {
           return res.code(400).send({
             status: "error",
             message: "Failed to upload images",
@@ -52,10 +76,12 @@ export function MediaRoutes(fastify: FastifyInstance) {
           });
         }
 
-        let index = 1;
-        const responses: { index: number; key: string; url: string }[] = [];
-        for (let file of files) {
-          const rawBuffer = await file.toBuffer();
+        let order = 1;
+        const awsResponse: Array<
+          Pick<PostMediaType, "order" | "media" | "storage_key">
+        > = [];
+        for (let aux of files) {
+          const rawBuffer = await aux.toBuffer();
           const type = await fileTypeFromBuffer(rawBuffer);
           if (!type || !type.mime.startsWith("image/")) {
             return res.code(400).send({
@@ -73,7 +99,7 @@ export function MediaRoutes(fastify: FastifyInstance) {
           try {
             const putParams: PutObjectCommandInput = {
               Bucket: environment.bucketName,
-              Key: `tmp/${Date.now()}-${randomUUID()}-${index}-${file.filename}`,
+              Key: `${Date.now()}-${randomUUID()}-${order}-${aux.filename}`,
               Body: buffer,
               ContentType: type.mime,
             };
@@ -87,13 +113,13 @@ export function MediaRoutes(fastify: FastifyInstance) {
               });
             }
 
-            responses.push({
-              index: index,
-              key: putParams.Key!,
-              url: `https://${environment.bucketName}.s3.${environment.bucketRegion}.amazonaws.com/${putParams.Key}`,
+            awsResponse.push({
+              order: order,
+              media: "IMAGE",
+              storage_key: putParams.Key!,
             });
 
-            index++;
+            order++;
           } catch (error) {
             return res.code(500).send({
               status: "error",
@@ -103,13 +129,18 @@ export function MediaRoutes(fastify: FastifyInstance) {
           }
         }
 
+        const response = await postMediaController.CreatePostMedia(
+          params.post_id,
+          awsResponse,
+        );
+
         return res.code(200).send({
           status: "success",
-          message: "Uploaded Image successfully",
-          data: responses,
+          message: "Successfully uplodaded image",
+          data: response,
         });
       } catch (error) {
-        return res.code(500).send({
+        res.code(500).send({
           status: "error",
           message: "Failed to upload image",
           error: String(error),
@@ -119,105 +150,99 @@ export function MediaRoutes(fastify: FastifyInstance) {
   );
 
   fastify.withTypeProvider<ZodTypeProvider>().get(
-    "/post/:postId",
+    "/media/retrieve/post-id/:post_id",
     {
       schema: {
         tags: ["Media"],
-        summary: "Get uploaded image",
+        summary: "Get post media",
         description: "Api route to get uploaded image file",
         response: {
-          200: SuccessResponseSchema(
-            z
-              .object({ index: z.number(), key: z.string(), url: z.string() })
-              .array(),
-          ),
+          200: SuccessResponseSchema(PostMediaSchema.array()),
           400: ErrorResponseSchema,
           500: ErrorResponseSchema,
         },
-        consumes: ["multipart/form-data"],
-        params: z.object({
-          postId: z.uuid(),
-        }),
+        params: PostMediaSchema.pick({ post_id: true }),
       },
     },
     async (req, res) => {
-      // TODO: need to finish postMedia routes and post routes first, but atleast i can upload images :)
-      // use the post id to retrieve all the images since the postMedia type on the database has a reference to the post
-      // try {
-      //   const getParams: GetObjectCommandInput = {
-      //     Bucket: environment.bucketName,
-      //   };
-      //   const command = new GetObjectCommand(getParams);
-      //   const url = await getSignedUrl(client, command, { expiresIn: 3600 });
-      // } catch (error) {
-      //   return res.code(500).send({
-      //     status: "error",
-      //     message: "Failed to fetch image",
-      //     error: String(error),
-      //   });
-      // }
+      try {
+        const params = req.params;
+
+        const aws = CreateAwsClient();
+
+        const response = await postMediaController.GetPostMedia(params.post_id);
+
+        for (let aux of response) {
+          const getParams: GetObjectCommandInput = {
+            Bucket: environment.bucketName,
+            Key: aux.storage_key,
+          };
+
+          const command = new GetObjectCommand(getParams);
+          const url = await getSignedUrl(aws, command, { expiresIn: 60 * 60 });
+
+          aux.url = url;
+        }
+
+        return res.code(200).send({
+          status: "success",
+          message: "Successfully retrieved post media",
+          data: response,
+        });
+      } catch (error) {
+        return res.code(500).send({
+          status: "error",
+          message: "Failed to get post media",
+          error: String(error),
+        });
+      }
     },
   );
 
-  fastify.post(
-    "/confirm",
+  fastify.withTypeProvider<ZodTypeProvider>().post(
+    "/media/delete/post-id/:post_id",
     {
       schema: {
         tags: ["Media"],
-        summary: "Confirm temporary images",
-        description: "Api route to confirm temporary image files",
-        response: {
-          200: SuccessResponseSchema(
-            z
-              .object({ index: z.number(), key: z.string(), url: z.string() })
-              .array(),
-          ),
-          400: ErrorResponseSchema,
-          500: ErrorResponseSchema,
-        },
-        consumes: ["multipart/form-data"],
-        body: z.object({
-          files: z
-            .custom<MultipartFile>()
-            .meta({
-              type: "string",
-              format: "binary",
-            })
-            .array(),
-        }),
-      },
-    },
-    async () => {},
-  );
-
-  fastify.post(
-    "/delete",
-    {
-      schema: {
-        tags: ["Media"],
-        summary: "Delete image",
+        summary: "Delete images",
         description: "Api route to delete image files",
         response: {
-          200: SuccessResponseSchema(
-            z
-              .object({ index: z.number(), key: z.string(), url: z.string() })
-              .array(),
-          ),
+          200: SuccessResponseNoDataSchema,
           400: ErrorResponseSchema,
           500: ErrorResponseSchema,
         },
-        consumes: ["multipart/form-data"],
-        body: z.object({
-          files: z
-            .custom<MultipartFile>()
-            .meta({
-              type: "string",
-              format: "binary",
-            })
-            .array(),
-        }),
+        params: PostMediaSchema.pick({ post_id: true }),
       },
     },
-    async () => {},
+    async (req, res) => {
+      try {
+        const params = req.params;
+
+        const aws = CreateAwsClient();
+
+        const response = await postMediaController.GetPostMedia(params.post_id);
+
+        for (let aux of response) {
+          const getParams: GetObjectCommandInput = {
+            Bucket: environment.bucketName,
+            Key: aux.storage_key,
+          };
+
+          const command = new DeleteObjectCommand(getParams);
+          await aws.send(command);
+        }
+
+        return res.code(200).send({
+          status: "success",
+          message: "Successfully deleted post media",
+        });
+      } catch (error) {
+        return res.code(500).send({
+          status: "error",
+          message: "Failed to delete post media",
+          error: String(error),
+        });
+      }
+    },
   );
 }

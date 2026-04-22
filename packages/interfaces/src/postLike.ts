@@ -1,13 +1,19 @@
 import { PostLikeType } from "@repo/types";
 
 export interface IPostLike {
-  Like(): Promise<PostLikeType>;
+  Like(
+    postId: PostLikeType["post_id"],
+    userId: PostLikeType["user_id"],
+  ): Promise<PostLikeType>;
 
-  GetLikeByUserId(userId: PostLikeType["user_id"]): Promise<PostLikeType[]>;
-  GetIsUserLike(
+  GetLikeByPostId(postId: PostLikeType["post_id"]): Promise<PostLikeType[]>;
+  GetUserLikeRelationship(
     userId: PostLikeType["user_id"],
     postId: PostLikeType["post_id"],
   ): Promise<PostLikeType>;
 
-  Unlike(): Promise<PostLikeType>;
+  Unlike(
+    postId: PostLikeType["post_id"],
+    userId: PostLikeType["user_id"],
+  ): Promise<PostLikeType>;
 }

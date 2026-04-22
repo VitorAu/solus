@@ -5,7 +5,9 @@ export const postAnalyticTable = pgTable(
   "post_analytic",
   {
     id: uuid().defaultRandom().primaryKey(),
-    post_id: uuid().references(() => postTable.id, { onDelete: "cascade" }),
+    post_id: uuid()
+      .notNull()
+      .references(() => postTable.id, { onDelete: "cascade" }),
     like_count: integer().notNull().default(0),
     created_at: timestamp().defaultNow().notNull(),
     updated_at: timestamp().defaultNow().notNull(),

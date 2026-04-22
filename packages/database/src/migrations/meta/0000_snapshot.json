@@ -1,5 +1,5 @@
 {
-  "id": "ea1ec3cd-b263-40d3-9368-5ce2b0effc43",
+  "id": "14eadfa5-2025-4e16-9090-b50f114b0b76",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -565,7 +565,7 @@
           "name": "post_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "like_count": {
           "name": "like_count",
@@ -642,8 +642,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "liked": {
-          "name": "liked",
+        "is_liked": {
+          "name": "is_liked",
           "type": "boolean",
           "primaryKey": false,
           "notNull": true,
@@ -714,9 +714,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "post_id": {
           "name": "post_id",
@@ -737,6 +738,18 @@
           "primaryKey": false,
           "notNull": true
         },
+        "storage_key": {
+          "name": "storage_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "url": {
+          "name": "url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -750,6 +763,12 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},

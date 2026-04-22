@@ -11,12 +11,15 @@ import { postTable } from "./post";
 export const mediaTypeEnum = pgEnum("media", ["IMAGE", "VIDEO"]);
 
 export const postMediaTable = pgTable("post_media", {
-  id: text().notNull().primaryKey(),
+  id: uuid().defaultRandom().primaryKey(),
   post_id: uuid()
     .notNull()
     .references(() => postTable.id, { onDelete: "cascade" }),
   order: integer().notNull(),
   media: mediaTypeEnum().notNull(),
+  storage_key: text().notNull(),
+  url: text(),
   created_at: timestamp().defaultNow().notNull(),
   updated_at: timestamp().defaultNow().notNull(),
+  deleted_at: timestamp(),
 });

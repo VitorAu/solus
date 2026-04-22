@@ -90,7 +90,7 @@ export class FollowController implements IFollow {
     return response;
   }
 
-  async GetIsUserFollowing(
+  async GetUserFollowRelationship(
     userId: FollowType["user_id"],
     followingId: FollowType["follows_user_id"],
   ): Promise<FollowType> {
@@ -108,7 +108,6 @@ export class FollowController implements IFollow {
         and(
           eq(followTable.user_id, userId),
           eq(followTable.follows_user_id, followingId),
-          eq(followTable.is_following, true),
         ),
       );
 

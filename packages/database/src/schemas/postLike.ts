@@ -12,7 +12,7 @@ export const postLikeTable = pgTable(
     user_id: uuid()
       .notNull()
       .references(() => userTable.id, { onDelete: "cascade" }),
-    liked: boolean().notNull().default(true),
+    is_liked: boolean().notNull().default(true),
     created_at: timestamp().defaultNow().notNull(),
     updated_at: timestamp().defaultNow().notNull(),
   },
