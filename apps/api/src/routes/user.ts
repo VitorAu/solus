@@ -20,6 +20,7 @@ export async function UserRoutes(
   opts: UserRoutesOpts,
 ) {
   const userController = new UserController(opts.database);
+
   fastify.addHook("preHandler", Auth);
 
   fastify.withTypeProvider<ZodTypeProvider>().get(

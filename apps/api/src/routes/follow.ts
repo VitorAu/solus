@@ -20,6 +20,8 @@ export function FollowRoutes(fastify: FastifyInstance, opts: FollowRoutesOpts) {
   const followController = new FollowController(opts.database);
   const followCodeController = new FollowCodeController(opts.database);
 
+  fastify.addHook("preHandler", Auth);
+
   fastify.withTypeProvider<ZodTypeProvider>().post(
     "",
     {

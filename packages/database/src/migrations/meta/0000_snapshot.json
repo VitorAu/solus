@@ -1,5 +1,5 @@
 {
-  "id": "8f0b490c-528f-486f-9478-72c0993dda76",
+  "id": "14eadfa5-2025-4e16-9090-b50f114b0b76",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -714,9 +714,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "post_id": {
           "name": "post_id",
@@ -736,6 +737,18 @@
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
+        },
+        "storage_key": {
+          "name": "storage_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "url": {
+          "name": "url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",

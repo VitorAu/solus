@@ -13,7 +13,7 @@ import {
 import { FastifyInstance } from "fastify/types/instance";
 import crypto from "crypto";
 
-describe("Analytics routes tests", () => {
+describe("Follow route tests", () => {
   let server: FastifyInstance;
   let database: NodePgDatabase<any>;
   let user: any;

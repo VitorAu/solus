@@ -1,7 +1,7 @@
-import { postMediaTable } from "@repo/database";
+import { postMediaTable, postTable } from "@repo/database";
 import { IPostMedia } from "@repo/interfaces";
 import { PostMediaType } from "@repo/types";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
 
 export class PostMediaController implements IPostMedia {
@@ -10,30 +10,41 @@ export class PostMediaController implements IPostMedia {
     this.database = database;
   }
 
-  // transform this into a transaction so it will also update the updated_at at the postTable
   async CreatePostMedia(
     postId: PostMediaType["post_id"],
-    data: Array<Pick<PostMediaType, "id" | "media">>,
+    data: Array<Pick<PostMediaType, "order" | "media" | "storage_key">>,
   ): Promise<PostMediaType[]> {
-    const response = await this.database
-      .insert(postMediaTable)
-      .values(
-        data.map((item, index) => ({
-          id: item.id,
-          post_id: postId,
-          order: index,
-          media: item.media,
-        })),
-      )
-      .returning({
-        id: postMediaTable.id,
-        post_id: postMediaTable.post_id,
-        order: postMediaTable.order,
-        media: postMediaTable.media,
-        created_at: postMediaTable.created_at,
-        updated_at: postMediaTable.updated_at,
-        deleted_at: postMediaTable.deleted_at,
-      });
+    const response = await this.database.transaction(async (tx) => {
+      const post = await tx
+        .insert(postMediaTable)
+        .values(
+          data.map((item) => ({
+            post_id: postId,
+            order: item.order,
+            media: item.media,
+            storage_key: item.storage_key,
+          })),
+        )
+        .returning({
+          id: postMediaTable.id,
+          post_id: postMediaTable.post_id,
+          order: postMediaTable.order,
+          media: postMediaTable.media,
+          storage_key: postMediaTable.storage_key,
+          created_at: postMediaTable.created_at,
+          updated_at: postMediaTable.updated_at,
+          deleted_at: postMediaTable.deleted_at,
+        });
+
+      await tx
+        .update(postTable)
+        .set({
+          updated_at: new Date(),
+        })
+        .where(and(eq(postTable.id, postId), isNotNull(postTable.deleted_at)));
+
+      return post;
+    });
 
     if (!response) throw new Error("Failed to create post media");
 
@@ -49,6 +60,7 @@ export class PostMediaController implements IPostMedia {
         post_id: postMediaTable.post_id,
         order: postMediaTable.order,
         media: postMediaTable.media,
+        storage_key: postMediaTable.storage_key,
         created_at: postMediaTable.created_at,
         updated_at: postMediaTable.updated_at,
         deleted_at: postMediaTable.deleted_at,
@@ -66,7 +78,7 @@ export class PostMediaController implements IPostMedia {
     return response;
   }
 
-  async DeleteAllPostMedia(postId: PostMediaType["post_id"]): Promise<void> {
+  async DeletePostMedia(postId: PostMediaType["post_id"]): Promise<void> {
     const response = await this.database
       .update(postMediaTable)
       .set({
@@ -84,6 +96,7 @@ export class PostMediaController implements IPostMedia {
         post_id: postMediaTable.post_id,
         order: postMediaTable.order,
         media: postMediaTable.media,
+        storage_key: postMediaTable.storage_key,
         created_at: postMediaTable.created_at,
         updated_at: postMediaTable.updated_at,
         deleted_at: postMediaTable.deleted_at,

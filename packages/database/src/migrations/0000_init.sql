@@ -86,10 +86,12 @@ CREATE TABLE "post_like" (
 );
 --> statement-breakpoint
 CREATE TABLE "post_media" (
-	"id" text PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"post_id" uuid NOT NULL,
 	"order" integer NOT NULL,
 	"media" "media" NOT NULL,
+	"storage_key" text NOT NULL,
+	"url" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp

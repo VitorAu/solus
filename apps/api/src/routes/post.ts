@@ -1,7 +1,9 @@
 import { PostController } from "@/controller/post";
+import { PostLikeController } from "@/controller/postLike";
 import { Auth } from "@/hooks/auth";
 import {
   ErrorResponseSchema,
+  PostLikeSchema,
   PostSchema,
   SuccessResponseNoDataSchema,
   SuccessResponseSchema,
@@ -16,6 +18,9 @@ type PostRoutesOpts = {
 
 export function PostRoutes(fastify: FastifyInstance, opts: PostRoutesOpts) {
   const postController = new PostController(opts.database);
+  const postLikeController = new PostLikeController(opts.database);
+
+  fastify.addHook("preHandler", Auth);
 
   fastify.withTypeProvider<ZodTypeProvider>().post(
     "",
@@ -60,7 +65,7 @@ export function PostRoutes(fastify: FastifyInstance, opts: PostRoutesOpts) {
   );
 
   fastify.withTypeProvider<ZodTypeProvider>().get(
-    "/post-id/:postId",
+    "/post-id/:id",
     {
       schema: {
         tags: ["Post"],
@@ -74,7 +79,7 @@ export function PostRoutes(fastify: FastifyInstance, opts: PostRoutesOpts) {
         },
         params: PostSchema.pick({ id: true }),
       },
-},
+    },
     async (req, res) => {
       try {
         const params = req.params;
@@ -97,7 +102,7 @@ export function PostRoutes(fastify: FastifyInstance, opts: PostRoutesOpts) {
   );
 
   fastify.withTypeProvider<ZodTypeProvider>().get(
-    "/user-id/:userId",
+    "/user-id/:user_id",
     {
       schema: {
         tags: ["Post"],
@@ -134,7 +139,7 @@ export function PostRoutes(fastify: FastifyInstance, opts: PostRoutesOpts) {
   );
 
   fastify.withTypeProvider<ZodTypeProvider>().patch(
-    "/update/post-id/:postId",
+    "/update/post-id/:id",
     {
       preHandler: [Auth],
       schema: {
@@ -179,7 +184,7 @@ export function PostRoutes(fastify: FastifyInstance, opts: PostRoutesOpts) {
   );
 
   fastify.withTypeProvider<ZodTypeProvider>().post(
-    "/delete/post-id/:postId",
+    "/delete/post-id/:id",
     {
       preHandler: [Auth],
       schema: {
@@ -210,6 +215,166 @@ export function PostRoutes(fastify: FastifyInstance, opts: PostRoutesOpts) {
         return res.code(500).send({
           status: "error",
           message: "Failed to delete post",
+          error: String(error),
+        });
+      }
+    },
+  );
+
+  fastify.withTypeProvider<ZodTypeProvider>().post(
+    "/like/post-id/:post_id",
+    {
+      preHandler: [Auth],
+      schema: {
+        tags: ["Post"],
+        summary: "Like post",
+        description: "Api route to like post",
+        security: [{ BearerAuth: [] }],
+        response: {
+          200: SuccessResponseSchema(PostLikeSchema),
+          400: ErrorResponseSchema,
+          500: ErrorResponseSchema,
+        },
+        params: PostLikeSchema.pick({ post_id: true }),
+      },
+    },
+    async (req, res) => {
+      try {
+        const params = req.params;
+        const userId = (req.user as any).sub;
+
+        const response = await postLikeController.Like(params.post_id, userId);
+
+        return res.code(200).send({
+          status: "success",
+          message: "Successfully liked post",
+          data: response,
+        });
+      } catch (error) {
+        return res.code(500).send({
+          status: "error",
+          message: "Failed to like post",
+          error: String(error),
+        });
+      }
+    },
+  );
+
+  fastify.withTypeProvider<ZodTypeProvider>().get(
+    "/likes/post-id/:post_id",
+    {
+      schema: {
+        tags: ["Post"],
+        summary: "Get likes by post id",
+        description: "Api route to get likes by post id",
+        security: [{ BearerAuth: [] }],
+        response: {
+          200: SuccessResponseSchema(PostLikeSchema.array()),
+          400: ErrorResponseSchema,
+          500: ErrorResponseSchema,
+        },
+        params: PostLikeSchema.pick({ post_id: true }),
+      },
+    },
+    async (req, res) => {
+      try {
+        const params = req.params;
+
+        const response = await postLikeController.GetLikeByPostId(
+          params.post_id,
+        );
+
+        return res.code(200).send({
+          status: "success",
+          message: "Successfully found likes by post id",
+          data: response,
+        });
+      } catch (error) {
+        return res.code(500).send({
+          status: "error",
+          message: "Failed to get likes by post id",
+          error: String(error),
+        });
+      }
+    },
+  );
+
+  fastify.withTypeProvider<ZodTypeProvider>().get(
+    "/like-relationship/user-id/:user_id/post-id/:post_id",
+    {
+      schema: {
+        tags: ["Post"],
+        summary: "Get user like relationship",
+        description: "Api route to get user like relationship",
+        security: [{ BearerAuth: [] }],
+        response: {
+          200: SuccessResponseSchema(PostLikeSchema),
+          400: ErrorResponseSchema,
+          500: ErrorResponseSchema,
+        },
+        params: PostLikeSchema.pick({ user_id: true, post_id: true }),
+      },
+    },
+    async (req, res) => {
+      try {
+        const params = req.params;
+
+        const response = await postLikeController.GetUserLikeRelationship(
+          params.user_id,
+          params.post_id,
+        );
+
+        return res.code(200).send({
+          status: "success",
+          message: "Successfully found user like relationship",
+          data: response,
+        });
+      } catch (error) {
+        return res.code(500).send({
+          status: "error",
+          message: "Failed to get user like relationship",
+          error: String(error),
+        });
+      }
+    },
+  );
+
+  fastify.withTypeProvider<ZodTypeProvider>().post(
+    "/unlike/post-id/:post_id",
+    {
+      preHandler: [Auth],
+      schema: {
+        tags: ["Post"],
+        summary: "Unlike post",
+        description: "Api route to unlike post",
+        security: [{ BearerAuth: [] }],
+        response: {
+          200: SuccessResponseSchema(PostLikeSchema),
+          400: ErrorResponseSchema,
+          500: ErrorResponseSchema,
+        },
+        params: PostLikeSchema.pick({ post_id: true }),
+      },
+    },
+    async (req, res) => {
+      try {
+        const params = req.params;
+        const userId = (req.user as any).sub;
+
+        const response = await postLikeController.Unlike(
+          params.post_id,
+          userId,
+        );
+
+        return res.code(200).send({
+          status: "success",
+          message: "Successfully unliked post",
+          data: response,
+        });
+      } catch (error) {
+        return res.code(500).send({
+          status: "error",
+          message: "Failed to unlike post",
           error: String(error),
         });
       }

@@ -30,6 +30,7 @@
     "packages/*"
   ],
   "dependencies": {
+    "app": "^0.1.0",
     "cross-env": "^10.1.0",
     "drizzle-orm": "^0.45.1"
   }
